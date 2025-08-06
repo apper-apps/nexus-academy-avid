@@ -87,13 +87,12 @@ export const toggleLike = async (reviewId, userId) => {
       newLikes = [...currentLikes, userIdInt];
     }
     
-    // Convert back to comma-separated string for database
+// Convert back to comma-separated string for database
     const likesString = newLikes.length > 0 ? newLikes.join(',') : '';
     
     await updateReview(reviewId, { likes: likesString });
     
     return newLikes;
-return newLikes;
   } catch (error) {
     console.error("Error toggling like:", error);
     throw error;
