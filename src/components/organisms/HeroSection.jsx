@@ -22,10 +22,10 @@ const HeroSection = () => {
           </div>
         </div>
         
-<h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-6">
-          Welcome to
+        <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-6">
+          Transform Your
           <span className="block bg-gradient-to-r from-electric to-blue-400 bg-clip-text text-transparent">
-            Nexus Avid
+            Potential Into Profit
           </span>
         </h1>
         
