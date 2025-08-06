@@ -63,6 +63,11 @@ export const deleteProgram = async (id) => {
     throw new Error("Program not found");
   }
   const deleted = programs[index];
-  programs.splice(index, 1);
+programs.splice(index, 1);
   return { ...deleted };
+};
+
+export const getNonMembershipPrograms = async () => {
+  await delay(300);
+  return programs.filter(p => p.slug !== "membership").map(p => ({ ...p }));
 };

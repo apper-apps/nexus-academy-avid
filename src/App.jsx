@@ -65,11 +65,12 @@ function App() {
         <Routes>
 <Route path="/" element={<HomePage />} />
           <Route path="/program" element={<ProgramPage />} />
-          <Route path="/program/:slug" element={<ProgramDetailPage currentUser={currentUser} />} />
-          <Route path="/lecture/:id" element={<LectureDetailPage />} />
-          <Route path="/insight" element={<InsightPage />} />
-          <Route path="/insight/:slug" element={<InsightPage />} />
-          <Route path="/reviews" element={<ReviewsPage />} />
+<Route path="/program" element={<ProgramPage />} />
+      <Route path="/program/master" element={<ProgramPage currentUser={currentUser} filterType="master" />} />
+      <Route path="/program/:slug" element={<ProgramDetailPage currentUser={currentUser} />} />
+      <Route path="/lecture/:id" element={<LectureDetailPage />} />
+      <Route path="/insight" element={<InsightPage />} />
+      <Route path="/insight/:slug" element={<InsightPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/users" element={<AdminPage />} />

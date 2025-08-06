@@ -1,18 +1,21 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import ProgramCard from '@/components/molecules/ProgramCard';
-import Loading from '@/components/ui/Loading';
-import Error from '@/components/ui/Error';
-import Empty from '@/components/ui/Empty';
-import { getPrograms } from '@/services/api/programService';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getPrograms } from "@/services/api/programService";
+import { data } from "@/services/api/postService";
+import { useAuth } from "@/contexts/AuthContext";
+import ApperIcon from "@/components/ApperIcon";
+import ProgramCard from "@/components/molecules/ProgramCard";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import Button from "@/components/atoms/Button";
 
 const ProgramPage = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { currentUser, isAdmin } = useAuth();
 
   const loadPrograms = async () => {
     try {
@@ -89,11 +92,23 @@ const ProgramPage = () => {
           </p>
         </div>
 
-        {/* Programs Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+{/* Programs Grid */}
+<div className="grid md:grid-cols-2 gap-8 mb-16">
           {programs.map((program) => (
-            <ProgramCard key={program.Id} program={program} />
+            <ProgramCard key={program.Id} program={program} currentUser={currentUser} />
           ))}
+          {isAdmin && (
+            <div className="bg-navy-card rounded-2xl p-8 border-2 border-dashed border-electric/30 hover:border-electric/60 transition-colors cursor-pointer group"
+                 onClick={() => navigate('/admin/programs/new')}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-electric/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-electric/30 transition-colors">
+                  <ApperIcon name="Plus" size={24} className="text-electric" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">Add Program</h3>
+                <p className="text-gray-400">Create a new master program for your students</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Why Choose Section */}

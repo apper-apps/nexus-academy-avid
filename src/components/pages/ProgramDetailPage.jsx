@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import Badge from '@/components/atoms/Badge';
-import FormField from '@/components/molecules/FormField';
-import LectureCard from '@/components/molecules/LectureCard';
-import Loading from '@/components/ui/Loading';
-import Error from '@/components/ui/Error';
-import { getProgramBySlug } from '@/services/api/programService';
-import { getLecturesByProgram } from '@/services/api/lectureService';
-import { addToWaitlist } from '@/services/api/waitlistService';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { getProgramBySlug } from "@/services/api/programService";
+import { addToWaitlist } from "@/services/api/waitlistService";
+import { getLecturesByProgram } from "@/services/api/lectureService";
+import ApperIcon from "@/components/ApperIcon";
+import FormField from "@/components/molecules/FormField";
+import LectureCard from "@/components/molecules/LectureCard";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
 
 const ProgramDetailPage = ({ currentUser }) => {
   const { slug } = useParams();
@@ -33,6 +33,12 @@ const ProgramDetailPage = ({ currentUser }) => {
   // Helper function to check if user is admin
   const isAdmin = () => {
     return currentUser && currentUser.is_admin;
+};
+
+  // Helper function to check if user can enter the course
+  const canEnterCourse = () => {
+    if (!currentUser) return false;
+    return currentUser.role === "member" || currentUser.role === "both";
   };
 
   const handleAddLecture = () => {
@@ -251,23 +257,33 @@ const ProgramDetailPage = ({ currentUser }) => {
                   required
                 />
                 
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={isJoining}
-                >
-                  {isJoining ? (
-                    <>
-                      <ApperIcon name="Loader2" size={16} className="mr-2 animate-spin" />
-                      Joining Waitlist...
-                    </>
-                  ) : (
-                    <>
-                      <ApperIcon name="UserPlus" size={16} className="mr-2" />
-                      Join Waitlist
-                    </>
-                  )}
-                </Button>
+{canEnterCourse() ? (
+                  <Button 
+                    className="w-full bg-electric hover:bg-electric-hover" 
+                    onClick={() => navigate(`/program/${slug}/lectures`)}
+                  >
+                    <ApperIcon name="PlayCircle" size={16} className="mr-2" />
+                    Enter Course
+                  </Button>
+                ) : (
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={isJoining}
+                  >
+                    {isJoining ? (
+                      <>
+                        <ApperIcon name="Loader2" size={16} className="mr-2 animate-spin" />
+                        Joining Waitlist...
+                      </>
+                    ) : (
+                      <>
+                        <ApperIcon name="UserPlus" size={16} className="mr-2" />
+                        Join Waitlist
+                      </>
+                    )}
+                  </Button>
+                )}
               </form>
 
               <div className="mt-6 pt-6 border-t border-gray-600">
