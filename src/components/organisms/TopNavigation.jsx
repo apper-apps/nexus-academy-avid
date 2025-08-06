@@ -63,11 +63,11 @@ const programDropdownItems = [
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center space-x-3">
+<Link to="/" className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-electric rounded-lg flex items-center justify-center">
                 <ApperIcon name="Zap" size={20} className="text-white" />
               </div>
-              <span className="text-xl font-bold text-white">Nexus Academy</span>
+              <span className="text-xl font-bold text-white">준태스쿨</span>
             </Link>
           </div>
 
