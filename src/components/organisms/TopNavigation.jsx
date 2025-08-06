@@ -71,9 +71,10 @@ const programDropdownItems = [
             <div className="flex items-center space-x-8">
               <NavLink to="/">Home</NavLink>
               
-              <NavigationDropdown 
+<NavigationDropdown 
                 label="Program"
                 items={programDropdownItems}
+                currentUser={currentUser}
               />
               
               <NavLink to="/insight">Insight</NavLink>

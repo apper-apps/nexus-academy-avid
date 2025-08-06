@@ -11,6 +11,7 @@ import TopNavigation from '@/components/organisms/TopNavigation';
 import HomePage from '@/components/pages/HomePage';
 import ProgramPage from '@/components/pages/ProgramPage';
 import ProgramDetailPage from '@/components/pages/ProgramDetailPage';
+import ProgramMasterDetailPage from '@/components/pages/ProgramMasterDetailPage';
 import LectureDetailPage from '@/components/pages/LectureDetailPage';
 import InsightPage from '@/components/pages/InsightPage';
 import ReviewsPage from '@/components/pages/ReviewsPage';
@@ -142,8 +143,9 @@ function AppContent() {
           <Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/program" element={<ProgramPage />} />
-          <Route path="/program/master" element={<ProgramPage filterType="master" />} />
+<Route path="/program/master" element={<ProgramPage filterType="master" />} />
           <Route path="/program/:slug" element={<ProgramDetailPage />} />
+          <Route path="/program/master/:slug" element={<ProgramMasterDetailPage />} />
           <Route path="/lecture/:id" element={<LectureDetailPage />} />
           <Route path="/insight" element={<InsightPage />} />
           <Route path="/insight/:slug" element={<InsightPage />} />

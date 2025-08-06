@@ -11,11 +11,11 @@ import Button from "@/components/atoms/Button";
 
 export default function ProgramPage({ filterType = 'all', currentUser = null }) {
   const navigate = useNavigate()
-  const [programs, setPrograms] = useState([])
+const [programs, setPrograms] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
   const isAdmin = currentUser?.is_admin || false
-  
   async function loadPrograms() {
     try {
       setLoading(true)
@@ -29,8 +29,15 @@ export default function ProgramPage({ filterType = 'all', currentUser = null }) 
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     loadPrograms();
+  }, [refreshTrigger]);
+
+  // Expose refresh function globally for state invalidation
+  useEffect(() => {
+    window.invalidateProgramsQuery = () => {
+      setRefreshTrigger(prev => prev + 1);
+    };
   }, []);
 
   if (loading) {
