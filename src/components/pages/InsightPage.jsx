@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import ApperIcon from '@/components/ApperIcon';
 import PostCard from '@/components/molecules/PostCard';
 import SearchBar from '@/components/molecules/SearchBar';
@@ -14,7 +15,11 @@ const InsightPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
+const navigate = useNavigate();
+  
+  // Get user state for admin checking
+  const { user } = useSelector((state) => state.user);
+  const isAdmin = user?.is_admin || false;
 
   const loadPosts = async () => {
     try {
@@ -72,22 +77,9 @@ const InsightPage = () => {
     <div className="pt-16 min-h-screen bg-midnight">
 <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Header with New Post Button */}
-        <div className="flex items-center justify-between mb-12">
-          <div className="flex-1">
-            {/* Header content */}
-          </div>
-          <div className="flex-shrink-0 ml-8">
-            <button 
-              onClick={() => navigate('/insight/new')}
-              className="flex items-center px-4 py-2 bg-electric hover:bg-electric-hover text-white font-medium rounded-lg transition-colors"
-            >
-              <ApperIcon name="Plus" size={16} className="mr-2" />
-              새 글 (New Post)
-            </button>
-          </div>
-        </div>
         
         {/* Header */}
+{/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center px-4 py-2 bg-electric/10 border border-electric/30 rounded-full text-electric text-sm font-medium mb-6">
             <ApperIcon name="BookOpen" size={16} className="mr-2" />
@@ -105,6 +97,19 @@ const InsightPage = () => {
             Practical insights, strategic frameworks, and actionable advice to accelerate 
             your entrepreneurial journey and business growth.
           </p>
+          
+          {/* New Post Button - Admin Only */}
+          {isAdmin && (
+            <div className="mb-8">
+              <button 
+                onClick={() => navigate('/insight/new')}
+                className="flex items-center px-4 py-2 bg-electric hover:bg-electric-hover text-white font-medium rounded-lg transition-colors mx-auto"
+              >
+                <ApperIcon name="Plus" size={16} className="mr-2" />
+                새 글 (New Post)
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Search */}
