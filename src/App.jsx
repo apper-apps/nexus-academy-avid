@@ -92,9 +92,15 @@ function AppContent() {
           }
           // Store user information in Redux
           dispatch(setUser(JSON.parse(JSON.stringify(user))));
-        } else {
+} else {
           // User is not authenticated
-          if (!isAuthPage) {
+          // Define public routes that don't require authentication
+          const publicRoutes = ['/'];
+          const isPublicRoute = publicRoutes.some(route => 
+            currentPath === route || currentPath.startsWith(route + '?')
+          );
+          
+          if (!isAuthPage && !isPublicRoute) {
             navigate(
               currentPath.includes('/signup')
                 ? `/signup?redirect=${currentPath}`
@@ -112,7 +118,7 @@ function AppContent() {
             }
           } else if (isAuthPage) {
             navigate(currentPath);
-          } else {
+          } else if (!isPublicRoute) {
             navigate('/login');
           }
           dispatch(clearUser());
