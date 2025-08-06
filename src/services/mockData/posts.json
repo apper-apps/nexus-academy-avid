@@ -1,0 +1,29 @@
+[
+  {
+    "Id": 1,
+    "slug": "first-post",
+    "title": "Welcome to Nexus Academy: Your Journey to Success Starts Here",
+    "content": "At Nexus Academy, we believe that success isn't just about what you know—it's about how you think, how you act, and how you connect with others who share your vision.\n\nOur platform is designed for ambitious entrepreneurs who refuse to settle for mediocrity. Whether you're just starting your journey or looking to scale to new heights, we've created a comprehensive learning environment that combines cutting-edge strategies with real-world application.\n\nWhat sets us apart? It's our community-driven approach. Every lesson, every insight, every breakthrough is enhanced by the collective wisdom of like-minded individuals who are on the same path as you.\n\nReady to transform your potential into profit? Your journey starts now.",
+    "author_id": 1,
+    "created_at": "2024-01-10T09:00:00Z",
+    "updated_at": "2024-01-10T09:00:00Z"
+  },
+  {
+    "Id": 2,
+    "slug": "mindset-vs-strategy",
+    "title": "Why Mindset Beats Strategy Every Time",
+    "content": "I've coached thousands of entrepreneurs, and here's what I've learned: strategy is everywhere, but the right mindset is rare.\n\nYou can have the perfect business plan, the best product, and unlimited resources—but if your mind isn't aligned with success, you'll sabotage yourself every single time.\n\nThe most successful students in our programs aren't necessarily the smartest or the most experienced. They're the ones who've mastered their inner game first.\n\nHere are the three mindset shifts that separate winners from everyone else:\n\n1. **Ownership Over Victimhood**: Champions take responsibility for everything in their life\n2. **Growth Over Comfort**: They seek challenges, not easy wins\n3. **Abundance Over Scarcity**: They believe there's enough success for everyone\n\nWhich mindset shift do you need to work on most?",
+    "author_id": 1,
+    "created_at": "2024-01-12T14:30:00Z",
+    "updated_at": "2024-01-12T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "slug": "scaling-breakthrough",
+    "title": "The One Thing Nobody Tells You About Scaling",
+    "content": "Everyone talks about scaling strategies, systems, and processes. But there's one crucial element that most gurus won't mention: scaling your identity.\n\nHere's the uncomfortable truth: you can't scale beyond who you believe you are.\n\nIf you see yourself as a 'small business owner,' you'll unconsciously cap your growth. If you identify as someone who 'doesn't know about technology,' you'll avoid the digital strategies that could 10x your business.\n\nYour identity is your ceiling.\n\nThe entrepreneurs who break through to seven and eight figures don't just change their strategies—they completely rewire their self-concept.\n\nThey stop being someone who 'runs a business' and become someone who 'builds empires.'\n\nThey stop being someone who 'tries to help people' and become someone who 'transforms lives at scale.'\n\nWhat identity upgrade do you need to make this year?",
+    "author_id": 1,
+    "created_at": "2024-01-18T10:15:00Z",
+    "updated_at": "2024-01-18T10:15:00Z"
+  }
+]

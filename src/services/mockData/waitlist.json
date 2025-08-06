@@ -1,0 +1,20 @@
+[
+  {
+    "Id": 1,
+    "email": "john.doe@example.com",
+    "program_slug": "membership",
+    "created_at": "2024-02-10T10:30:00Z"
+  },
+  {
+    "Id": 2,
+    "email": "sarah.smith@example.com",
+    "program_slug": "text-influencer",
+    "created_at": "2024-02-11T15:45:00Z"
+  },
+  {
+    "Id": 3,
+    "email": "mike.johnson@example.com",
+    "program_slug": "membership",
+    "created_at": "2024-02-12T09:20:00Z"
+  }
+]

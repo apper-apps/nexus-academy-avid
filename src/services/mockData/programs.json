@@ -1,0 +1,22 @@
+[
+  {
+    "Id": 1,
+    "slug": "membership",
+    "title": "Membership Program",
+    "description": "Transform your mindset and build lasting wealth through proven strategies and community support. Perfect for entrepreneurs ready to scale their first business.",
+    "price": 997,
+    "has_common_course": false,
+    "type": "member",
+    "created_at": "2024-01-15T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "slug": "text-influencer",
+    "title": "Text Influencer Master",
+    "description": "Master the art of influence through written communication. Learn advanced copywriting, content strategy, and audience psychology from industry experts.",
+    "price": 2997,
+    "has_common_course": true,
+    "type": "master",
+    "created_at": "2024-01-20T10:00:00Z"
+  }
+]

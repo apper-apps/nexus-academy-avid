@@ -1,0 +1,38 @@
+[
+  {
+    "Id": 1,
+    "email": "admin@nexusacademy.com",
+    "name": "Academy Admin",
+    "role": "both",
+    "master_cohort": "2024-Q1",
+    "is_admin": true,
+    "created_at": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 2,
+    "email": "member@example.com",
+    "name": "Active Member",
+    "role": "member",
+    "master_cohort": null,
+    "is_admin": false,
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  {
+    "Id": 3,
+    "email": "master@example.com",
+    "name": "Master Student",
+    "role": "master",
+    "master_cohort": "2024-Q1",
+    "is_admin": false,
+    "created_at": "2024-01-20T14:15:00Z"
+  },
+  {
+    "Id": 4,
+    "email": "free@example.com",
+    "name": "Free User",
+    "role": "free",
+    "master_cohort": null,
+    "is_admin": false,
+    "created_at": "2024-02-01T11:00:00Z"
+  }
+]
