@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { getReviews, toggleLike } from "@/services/api/reviewService";
-import { data } from "@/services/api/postService";
+import { useSelector } from "react-redux";
+import { getReviews, createReview, updateReview, toggleLike } from "@/services/api/reviewService";
 import ApperIcon from "@/components/ApperIcon";
 import ReviewCard from "@/components/molecules/ReviewCard";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import Card from "@/components/atoms/Card";
 
-const ReviewsPage = ({ currentUserId = null }) => {
+const ReviewsPage = () => {
+  const { user, isAuthenticated } = useSelector((state) => state.user);
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
-  // No authentication required for viewing reviews
+  const [showWriteModal, setShowWriteModal] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  
+  const currentUserId = user?.userId;
+  const isAdmin = user?.accounts?.[0]?.is_admin || false;
   // currentUserId will be passed from parent component for authenticated users
   const loadReviews = async () => {
     try {
@@ -31,16 +39,70 @@ const ReviewsPage = ({ currentUserId = null }) => {
     }
   };
 
-  const applyFilter = (reviewData, filterType) => {
+const applyFilter = (reviewData, filterType) => {
+    // Sort reviews: featured first (max 4), then remaining by newest
+    const sortedReviews = [...reviewData].sort((a, b) => {
+      // If both are featured or both are not featured, sort by created_at DESC
+      if (a.featured === b.featured) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
+      // Featured reviews come first
+      return b.featured - a.featured;
+    });
+
+    // Limit featured reviews to maximum 4
+    const featuredReviews = sortedReviews.filter(r => r.featured).slice(0, 4);
+    const regularReviews = sortedReviews.filter(r => !r.featured);
+    const orderedReviews = [...featuredReviews, ...regularReviews];
+
     switch (filterType) {
       case "featured":
-        setFilteredReviews(reviewData.filter(r => r.featured));
+        setFilteredReviews(featuredReviews);
         break;
       case "recent":
-        setFilteredReviews(reviewData.slice(0, 10));
+        setFilteredReviews(orderedReviews.slice(0, 10));
         break;
       default:
-        setFilteredReviews(reviewData);
+        setFilteredReviews(orderedReviews);
+    }
+  };
+
+  const handleWriteReview = async () => {
+    if (!reviewText.trim()) {
+      toast.error("Please enter your review");
+      return;
+    }
+    
+    if (reviewText.length > 500) {
+      toast.error("Review must be 500 characters or less");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const newReview = await createReview({
+        text: reviewText.trim(),
+        author_id: currentUserId
+      });
+      
+      toast.success("Review submitted successfully!");
+      setReviewText("");
+      setShowWriteModal(false);
+      loadReviews(); // Refresh reviews
+    } catch (error) {
+      toast.error("Failed to submit review");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleToggleFeatured = async (reviewId, currentFeatured) => {
+    try {
+      await updateReview(reviewId, { featured: !currentFeatured });
+      toast.success(currentFeatured ? "Review unfeatured" : "Review featured");
+      loadReviews(); // Refresh reviews
+    } catch (error) {
+      toast.error("Failed to update featured status");
     }
   };
 
@@ -67,13 +129,12 @@ const handleLike = async (reviewId, userId) => {
       toast.success("Review liked!");
     } catch (error) {
       toast.error("Failed to like review");
-    }
+}
   };
 
   useEffect(() => {
     loadReviews();
   }, []);
-
   if (loading) {
     return (
       <div className="pt-16 min-h-screen bg-midnight">
@@ -112,12 +173,23 @@ const handleLike = async (reviewId, userId) => {
             </span>
           </h1>
           
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+<p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
             Read authentic testimonials from our community of successful entrepreneurs 
             who've transformed their businesses with Nexus Academy.
           </p>
+          
+          {isAuthenticated && (
+            <div className="flex justify-center mb-8">
+              <Button
+                onClick={() => setShowWriteModal(true)}
+                className="px-6 py-3 bg-electric hover:bg-electric-hover text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105"
+              >
+                <ApperIcon name="Edit" size={16} className="mr-2" />
+                리뷰 작성 (Write Review)
+              </Button>
+            </div>
+          )}
         </div>
-
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
           <div className="text-center">
@@ -170,11 +242,13 @@ const handleLike = async (reviewId, userId) => {
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {filteredReviews.map((review) => (
-                <ReviewCard 
+<ReviewCard 
                   key={review.Id} 
                   review={review}
                   currentUserId={currentUserId}
+                  isAdmin={isAdmin}
                   onLike={handleLike}
+                  onToggleFeatured={handleToggleFeatured}
                 />
               ))}
             </div>
@@ -201,8 +275,61 @@ const handleLike = async (reviewId, userId) => {
               </div>
             </div>
           </>
-        )}
+)}
       </div>
+
+      {/* Write Review Modal */}
+      {showWriteModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-white">Write Your Review</h3>
+              <button
+                onClick={() => setShowWriteModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <ApperIcon name="X" size={20} />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Share your experience with Nexus Academy..."
+                  className="w-full h-32 px-4 py-3 bg-navy-light border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric resize-none"
+                  maxLength={500}
+                />
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-sm text-gray-400">
+                    Share your honest experience to help others
+                  </span>
+                  <span className={`text-sm ${reviewText.length > 450 ? 'text-yellow-400' : 'text-gray-400'}`}>
+                    {reviewText.length}/500
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowWriteModal(false)}
+                  disabled={submitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleWriteReview}
+                  disabled={submitting || !reviewText.trim() || reviewText.length > 500}
+                >
+                  {submitting ? "Submitting..." : "Submit Review"}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

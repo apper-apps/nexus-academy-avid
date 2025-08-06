@@ -1,4 +1,6 @@
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import React from "react";
+import Error from "@/components/ui/Error";
 
 // Initialize ApperClient
 const getApperClient = () => {
@@ -21,10 +23,15 @@ export const getReviews = async () => {
         { field: { Name: "created_at" } },
         { 
           field: { Name: "author_id" },
-          referenceField: { field: { Name: "Name" } }
-        }
+referenceField: { field: { Name: "Name" } }
+        },
+        { field: { Name: "text" } },
+        { field: { Name: "likes" } },
+        { field: { Name: "featured" } },
+        { field: { Name: "created_at" } }
       ],
       orderBy: [
+        { fieldName: "featured", sorttype: "DESC" },
         { fieldName: "created_at", sorttype: "DESC" }
       ]
     };
@@ -37,7 +44,15 @@ export const getReviews = async () => {
       return [];
     }
     
-    return response.data || [];
+    // Process the response to ensure proper data formatting
+    const processedData = (response.data || []).map(review => ({
+      ...review,
+      likes: Array.isArray(review.likes) 
+        ? review.likes 
+        : (review.likes ? review.likes.split(',').filter(Boolean).map(id => parseInt(id)) : [])
+    }));
+    
+    return processedData;
   } catch (error) {
     if (error?.response?.data?.message) {
       console.error("Error fetching reviews:", error.response.data.message);
@@ -45,6 +60,43 @@ export const getReviews = async () => {
       console.error(error.message);
     }
     return [];
+  }
+};
+
+// New function for toggling likes
+export const toggleLike = async (reviewId, userId) => {
+  try {
+    // First get the current review
+    const currentReview = await getReviewById(reviewId);
+    
+    let currentLikes = [];
+    if (Array.isArray(currentReview.likes)) {
+      currentLikes = currentReview.likes;
+    } else if (currentReview.likes) {
+      currentLikes = currentReview.likes.split(',').filter(Boolean).map(id => parseInt(id));
+    }
+    
+    const userIdInt = parseInt(userId);
+    let newLikes;
+    
+    if (currentLikes.includes(userIdInt)) {
+      // Remove like
+      newLikes = currentLikes.filter(id => id !== userIdInt);
+    } else {
+      // Add like
+      newLikes = [...currentLikes, userIdInt];
+    }
+    
+    // Convert back to comma-separated string for database
+    const likesString = newLikes.length > 0 ? newLikes.join(',') : '';
+    
+    await updateReview(reviewId, { likes: likesString });
+    
+    return newLikes;
+return newLikes;
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    throw error;
   }
 };
 
@@ -130,9 +182,9 @@ export const createReview = async (reviewData) => {
     const apperClient = getApperClient();
     const params = {
       records: [{
-        Name: reviewData.Name || `Review by ${reviewData.author_id}`,
+        Name: reviewData.Name || `Review by User ${reviewData.author_id}`,
         text: reviewData.text,
-        likes: reviewData.likes || "",
+        likes: "", // Start with empty string
         featured: reviewData.featured || false,
         created_at: new Date().toISOString(),
         author_id: parseInt(reviewData.author_id)
@@ -183,7 +235,10 @@ export const updateReview = async (id, reviewData) => {
       updateData.text = reviewData.text;
     }
     if (reviewData.likes !== undefined) {
-      updateData.likes = reviewData.likes;
+      // Ensure likes is stored as comma-separated string
+      updateData.likes = Array.isArray(reviewData.likes) 
+        ? reviewData.likes.join(',')
+        : reviewData.likes || '';
     }
     if (reviewData.featured !== undefined) {
       updateData.featured = reviewData.featured;
@@ -225,36 +280,6 @@ export const updateReview = async (id, reviewData) => {
   }
 };
 
-export const toggleLike = async (id, userId) => {
-  try {
-    // First, get the current review to check current likes
-    const currentReview = await getReviewById(id);
-    const currentLikes = currentReview.likes ? currentReview.likes.split(',').filter(l => l) : [];
-    const userIdStr = userId.toString();
-    
-    let updatedLikes;
-    if (currentLikes.includes(userIdStr)) {
-      // Remove like
-      updatedLikes = currentLikes.filter(like => like !== userIdStr);
-    } else {
-      // Add like
-      updatedLikes = [...currentLikes, userIdStr];
-    }
-    
-    const updatedReview = await updateReview(id, {
-      likes: updatedLikes.join(',')
-    });
-    
-    return updatedReview;
-  } catch (error) {
-    if (error?.response?.data?.message) {
-      console.error("Error toggling like:", error.response.data.message);
-    } else {
-      console.error(error.message);
-    }
-    throw error;
-  }
-};
 
 export const deleteReview = async (id) => {
   try {

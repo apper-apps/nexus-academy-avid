@@ -4,7 +4,7 @@ import ApperIcon from '@/components/ApperIcon';
 import Card from '@/components/atoms/Card';
 import Badge from '@/components/atoms/Badge';
 
-const ReviewCard = ({ review, currentUserId = null, onLike }) => {
+const ReviewCard = ({ review, currentUserId = null, isAdmin = false, onLike, onToggleFeatured }) => {
   const [isLiking, setIsLiking] = useState(false);
   const isLiked = currentUserId && review.likes.includes(currentUserId);
 
@@ -34,21 +34,41 @@ const ReviewCard = ({ review, currentUserId = null, onLike }) => {
               {format(new Date(review.created_at), 'MMM dd, yyyy')}
             </div>
           </div>
-        </div>
+</div>
         
-        {review.featured && (
-          <Badge variant="primary" size="sm">
-            <ApperIcon name="Star" size={12} className="mr-1" />
-            Featured
-          </Badge>
-        )}
+        <div className="flex items-center space-x-2">
+          {review.featured && (
+            <Badge variant="primary" size="sm">
+              <ApperIcon name="Star" size={12} className="mr-1" />
+              Featured
+            </Badge>
+          )}
+          
+          {isAdmin && (
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id={`featured-${review.Id}`}
+                checked={review.featured || false}
+                onChange={() => onToggleFeatured?.(review.Id, review.featured)}
+                className="w-4 h-4 text-electric bg-navy-card border-gray-600 rounded focus:ring-electric focus:ring-2"
+              />
+              <label
+                htmlFor={`featured-${review.Id}`}
+                className="text-xs text-gray-400 cursor-pointer hover:text-white transition-colors"
+              >
+                추천 고정
+              </label>
+            </div>
+          )}
+        </div>
       </div>
       
       <p className="text-gray-300 mb-4 leading-relaxed">
         {review.text}
       </p>
       
-      <div className="flex items-center justify-between">
+<div className="flex items-center justify-between">
         <button
           onClick={handleLike}
           disabled={!currentUserId || isLiking}
@@ -56,7 +76,8 @@ const ReviewCard = ({ review, currentUserId = null, onLike }) => {
             isLiked 
               ? 'text-red-400 hover:text-red-300' 
               : 'text-gray-400 hover:text-red-400'
-          } ${!currentUserId ? 'cursor-default' : 'cursor-pointer'}`}
+          } ${!currentUserId ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
+          title={!currentUserId ? "Login to like reviews" : isLiked ? "Unlike" : "Like"}
         >
           <ApperIcon 
             name="Heart" 
@@ -64,7 +85,8 @@ const ReviewCard = ({ review, currentUserId = null, onLike }) => {
             className={isLiked ? 'fill-current' : ''} 
           />
           <span className="text-sm">
-            {review.likes.length} {review.likes.length === 1 ? 'like' : 'likes'}
+            {Array.isArray(review.likes) ? review.likes.length : 
+             (review.likes ? review.likes.split(',').filter(Boolean).length : 0)} likes
           </span>
         </button>
         
