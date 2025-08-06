@@ -12,7 +12,7 @@ const Card = forwardRef(({
       ref={ref}
       className={cn(
         "bg-navy-card rounded-xl border border-gray-700/50 shadow-lg",
-        hover && "transition-all duration-200 hover:border-electric/50 hover:shadow-xl hover:shadow-electric/10 transform hover:-translate-y-1",
+hover && "transition-all duration-200 hover:border-electric hover:shadow-xl hover:shadow-electric/10 transform hover:-translate-y-1",
         className
       )}
       {...props}

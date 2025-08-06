@@ -70,7 +70,23 @@ const InsightPage = () => {
 
   return (
     <div className="pt-16 min-h-screen bg-midnight">
-      <div className="max-w-6xl mx-auto px-4 py-12">
+<div className="max-w-6xl mx-auto px-4 py-12">
+        {/* Header with New Post Button */}
+        <div className="flex items-center justify-between mb-12">
+          <div className="flex-1">
+            {/* Header content */}
+          </div>
+          <div className="flex-shrink-0 ml-8">
+            <button 
+              onClick={() => navigate('/insight/new')}
+              className="flex items-center px-4 py-2 bg-electric hover:bg-electric-hover text-white font-medium rounded-lg transition-colors"
+            >
+              <ApperIcon name="Plus" size={16} className="mr-2" />
+              새 글 (New Post)
+            </button>
+          </div>
+        </div>
+        
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center px-4 py-2 bg-electric/10 border border-electric/30 rounded-full text-electric text-sm font-medium mb-6">
@@ -116,7 +132,7 @@ const InsightPage = () => {
           )
         ) : (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
+<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {filteredPosts.map((post) => (
                 <PostCard key={post.Id} post={post} />
               ))}
