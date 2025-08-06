@@ -1,4 +1,6 @@
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import React from "react";
+import Error from "@/components/ui/Error";
 
 // Initialize ApperClient
 const getApperClient = () => {
@@ -331,12 +333,67 @@ export const deleteLecture = async (id) => {
       }
       return response.results[0].data;
     }
-  } catch (error) {
+} catch (error) {
     if (error?.response?.data?.message) {
       console.error("Error deleting lecture:", error.response.data.message);
     } else {
       console.error(error.message);
     }
     throw error;
+  }
+};
+
+export const getLecturesByCategoryAndProgram = async (category, programId) => {
+  try {
+    const apperClient = getApperClient();
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "title" } },
+        { field: { Name: "description" } },
+        { field: { Name: "category" } },
+        { field: { Name: "level" } },
+        { field: { Name: "duration" } },
+        { field: { Name: "video_url" } },
+        { field: { Name: "embed_url" } },
+        { field: { Name: "cohort_number" } },
+        { field: { Name: "sort_order" } },
+        { field: { Name: "created_at" } }
+      ],
+      where: [
+        {
+          FieldName: "category",
+          Operator: "EqualTo",
+          Values: [category]
+        },
+        {
+          FieldName: "program_id",
+          Operator: "EqualTo",
+          Values: [parseInt(programId)]
+        }
+      ],
+      orderBy: [
+        {
+          fieldName: "sort_order",
+          sorttype: "ASC"
+        }
+      ]
+    };
+    
+    const response = await apperClient.fetchRecords("lecture", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      return [];
+    }
+    
+    return response.data || [];
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error(`Error fetching lectures for category ${category} and program ${programId}:`, error.response.data.message);
+    } else {
+      console.error(error.message);
+    }
+    return [];
   }
 };
