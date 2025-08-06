@@ -210,14 +210,13 @@ export const deleteUser = async (id) => {
           if (record.message) toast.error(record.message);
         });
         throw new Error("Failed to delete user");
-      }
+}
       return response.results[0].data;
     }
   } catch (error) {
     if (error?.response?.data?.message) {
       console.error("Error deleting user:", error.response.data.message);
     } else {
-} else {
       console.error(error.message);
     }
     throw error;
