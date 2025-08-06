@@ -1,21 +1,22 @@
-import { useState, useEffect } from 'react';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import ReviewCard from '@/components/molecules/ReviewCard';
-import Loading from '@/components/ui/Loading';
-import Error from '@/components/ui/Error';
-import Empty from '@/components/ui/Empty';
-import { getReviews, toggleLike } from '@/services/api/reviewService';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { getReviews, toggleLike } from "@/services/api/reviewService";
+import { data } from "@/services/api/postService";
+import ApperIcon from "@/components/ApperIcon";
+import ReviewCard from "@/components/molecules/ReviewCard";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import Button from "@/components/atoms/Button";
 
-const ReviewsPage = () => {
+const ReviewsPage = ({ currentUserId = null }) => {
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
-  const currentUserId = 1; // Mock current user ID
-
+  // No authentication required for viewing reviews
+  // currentUserId will be passed from parent component for authenticated users
   const loadReviews = async () => {
     try {
       setLoading(true);
@@ -48,7 +49,13 @@ const ReviewsPage = () => {
     applyFilter(reviews, newFilter);
   };
 
-  const handleLike = async (reviewId, userId) => {
+const handleLike = async (reviewId, userId) => {
+    // Check if user is authenticated before allowing likes
+    if (!userId) {
+      toast.info("Please log in to like reviews");
+      return;
+    }
+    
     try {
       const updatedReview = await toggleLike(reviewId, userId);
       setReviews(prev => prev.map(r => 
