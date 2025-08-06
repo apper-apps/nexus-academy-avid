@@ -1,16 +1,21 @@
-import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import NavigationDropdown from '@/components/molecules/NavigationDropdown';
-import AvatarDropdown from '@/components/molecules/AvatarDropdown';
+import React, { useContext, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { AuthContext } from "../../App";
+import ApperIcon from "@/components/ApperIcon";
+import NavigationDropdown from "@/components/molecules/NavigationDropdown";
+import AvatarDropdown from "@/components/molecules/AvatarDropdown";
+import Button from "@/components/atoms/Button";
 
-const TopNavigation = ({ currentUser, onLogin, onSignup, onLogout }) => {
+const TopNavigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-const programDropdownItems = [
+const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { logout } = useContext(AuthContext);
+  
+  const programDropdownItems = [
     {
       title: "Membership",
       description: "Build your foundation",
@@ -23,7 +28,7 @@ const programDropdownItems = [
       icon: "MessageSquare",
       href: "/program/text-influencer"
     },
-    ...(currentUser?.is_admin ? [{
+    ...(user?.is_admin ? [{
       title: "➕ Add Program",
       description: "Create new program",
       icon: "Plus",
@@ -74,16 +79,16 @@ const programDropdownItems = [
 <NavigationDropdown 
                 label="Program"
                 items={programDropdownItems}
-                currentUser={currentUser}
+                currentUser={user}
               />
               
               <NavLink to="/insight">Insight</NavLink>
               <NavLink to="/reviews">Reviews</NavLink>
               
-              {currentUser && (
+{user && (
                 <>
                   <NavLink to="/profile">Profile</NavLink>
-                  {currentUser.is_admin && (
+                  {user.is_admin && (
                     <NavLink to="/admin">Admin</NavLink>
                   )}
                 </>
@@ -93,17 +98,17 @@ const programDropdownItems = [
 
           {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
-            {currentUser ? (
+{user ? (
               <AvatarDropdown 
-                user={currentUser} 
-                onLogout={onLogout}
+                user={user} 
+                onLogout={logout}
               />
             ) : (
-              <>
-                <Button variant="ghost" onClick={onLogin}>
+<>
+                <Button variant="ghost" onClick={() => navigate('/login')}>
                   Log In
                 </Button>
-                <Button onClick={onSignup}>
+                <Button onClick={() => navigate('/signup')}>
                   Sign Up
                 </Button>
               </>
@@ -134,15 +139,15 @@ const programDropdownItems = [
             <NavLink to="/insight" mobile>Insight</NavLink>
             <NavLink to="/reviews" mobile>Reviews</NavLink>
             
-            {currentUser ? (
+{user ? (
               <>
                 <NavLink to="/profile" mobile>Profile</NavLink>
-                {currentUser.is_admin && (
+                {user.is_admin && (
                   <NavLink to="/admin" mobile>Admin</NavLink>
                 )}
-                <button
+<button
                   onClick={() => {
-                    onLogout?.();
+                    logout();
                     setIsMobileMenuOpen(false);
                   }}
                   className="block w-full text-left px-3 py-2 text-white hover:text-electric transition-colors duration-200"
@@ -152,7 +157,7 @@ const programDropdownItems = [
               </>
             ) : (
               <div className="px-3 py-2 space-y-2">
-<Button 
+                <Button 
                   variant="ghost" 
                   className="w-full"
                   onClick={() => {

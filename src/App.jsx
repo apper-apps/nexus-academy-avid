@@ -160,7 +160,7 @@ function AppContent() {
   return (
     <AuthContext.Provider value={authMethods}>
       <div className="min-h-screen bg-midnight">
-        <TopNavigation />
+<TopNavigation />
 <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
