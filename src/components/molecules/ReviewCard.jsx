@@ -32,9 +32,9 @@ const ReviewCard = ({ review, currentUserId = null, isAdmin = false, onLike, onT
             <div className="font-medium text-white">Community Member</div>
             <div className="text-sm text-gray-400">
               {format(new Date(review.created_at), 'MMM dd, yyyy')}
-            </div>
-          </div>
 </div>
+          </div>
+        </div>
         
         <div className="flex items-center space-x-2">
           {review.featured && (
