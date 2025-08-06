@@ -9,6 +9,7 @@ import Login from "@/components/pages/Login";
 import PromptPassword from "@/components/pages/PromptPassword";
 import InsightPage from "@/components/pages/InsightPage";
 import InsightDetailPage from "@/components/pages/InsightDetailPage";
+import PostCreatePage from "@/components/pages/PostCreatePage";
 import ResetPassword from "@/components/pages/ResetPassword";
 import ProgramPage from "@/components/pages/ProgramPage";
 import ProfilePage from "@/components/pages/ProfilePage";
@@ -174,9 +175,9 @@ function AppContent() {
           <Route path="/program/:slug" element={<ProgramDetailPage />} />
           <Route path="/program/master/:slug" element={<ProgramMasterDetailPage />} />
           <Route path="/lecture/:id" element={<LectureDetailPage />} />
-          <Route path="/insight" element={<InsightPage />} />
+<Route path="/insight" element={<InsightPage />} />
 <Route path="/insight/:slug" element={<InsightDetailPage />} />
-          <Route path="/insight/new" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/insight/new" element={<ProtectedRoute><PostCreatePage /></ProtectedRoute>} />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />

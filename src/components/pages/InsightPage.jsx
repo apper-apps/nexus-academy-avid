@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import ApperIcon from '@/components/ApperIcon';
-import PostCard from '@/components/molecules/PostCard';
-import SearchBar from '@/components/molecules/SearchBar';
-import Loading from '@/components/ui/Loading';
-import Error from '@/components/ui/Error';
-import Empty from '@/components/ui/Empty';
-import { getPosts } from '@/services/api/postService';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { getPosts } from "@/services/api/postService";
+import ApperIcon from "@/components/ApperIcon";
+import SearchBar from "@/components/molecules/SearchBar";
+import PostCard from "@/components/molecules/PostCard";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
 
 const InsightPage = () => {
   const [posts, setPosts] = useState([]);
@@ -97,7 +97,7 @@ const navigate = useNavigate();
               </h1>
             </div>
             
-            {/* New Post Button - Admin Only - Top Right Position */}
+{/* New Post Button - Admin Only - Top Right Position */}
             {isAdmin && (
               <div className="absolute top-0 right-0 hidden md:block">
                 <button 
@@ -111,7 +111,7 @@ const navigate = useNavigate();
             )}
           </div>
           
-          {/* Mobile New Post Button - Admin Only */}
+{/* Mobile New Post Button - Admin Only */}
           {isAdmin && (
             <div className="md:hidden mb-6">
               <button 
