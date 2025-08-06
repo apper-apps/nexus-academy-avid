@@ -1,4 +1,6 @@
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import React from "react";
+import Error from "@/components/ui/Error";
 
 // Initialize ApperClient
 const getApperClient = () => {
@@ -54,20 +56,20 @@ fields: [
 export const getPostBySlug = async (slug) => {
   try {
     const apperClient = getApperClient();
-    const params = {
+const params = {
       fields: [
-{ field: { Name: "Name" } },
+        { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
         { field: { Name: "content" } },
-        { field: { Name: "thumbnail_url" } },
         { field: { Name: "summary" } },
-        { field: { Name: "created_at" } },
-        { field: { Name: "updated_at" } },
-        { 
+        { field: { Name: "thumbnail_url" } },
+        {
           field: { Name: "author_id" },
           referenceField: { field: { Name: "Name" } }
-        }
+        },
+        { field: { Name: "created_at" } },
+        { field: { Name: "updated_at" } }
       ],
       where: [
         {
