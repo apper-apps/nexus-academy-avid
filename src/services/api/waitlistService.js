@@ -14,25 +14,58 @@ export const getWaitlistByProgram = async (programSlug) => {
   return waitlist.filter(w => w.program_slug === programSlug);
 };
 
-export const addToWaitlist = async (email, programSlug) => {
-  await delay(400);
-  
-  // Check if already on waitlist
-  const existing = waitlist.find(w => w.email === email && w.program_slug === programSlug);
-  if (existing) {
-    throw new Error("Email already on waitlist for this program");
+export const addToWaitlist = async (waitlistData) => {
+  try {
+    // Initialize ApperClient
+    const { ApperClient } = window.ApperSDK;
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+
+    // Prepare data with only updateable fields
+    const params = {
+      records: [{
+        email: waitlistData.email,
+        program_slug: waitlistData.program_slug,
+        ...(waitlistData.user_id && { user_id: waitlistData.user_id })
+      }]
+    };
+
+    const response = await apperClient.createRecord('waitlist', params);
+    
+    // Handle response
+    if (!response.success) {
+      console.error(response.message);
+      throw new Error(response.message);
+    }
+    
+    if (response.results) {
+      const successfulRecords = response.results.filter(result => result.success);
+      const failedRecords = response.results.filter(result => !result.success);
+      
+      if (failedRecords.length > 0) {
+        console.error(`Failed to create waitlist ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        
+        failedRecords.forEach(record => {
+          record.errors?.forEach(error => {
+            console.error(`${error.fieldLabel}: ${error.message}`);
+          });
+          if (record.message) throw new Error(record.message);
+        });
+      }
+      
+      return successfulRecords.length > 0 ? successfulRecords[0].data : null;
+    }
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error creating waitlist entry:", error?.response?.data?.message);
+      throw new Error(error?.response?.data?.message);
+    } else {
+      console.error("Error creating waitlist entry:", error.message);
+      throw new Error(error.message);
+    }
   }
-  
-  const maxId = waitlist.length > 0 ? Math.max(...waitlist.map(w => w.Id)) : 0;
-  const newEntry = {
-    Id: maxId + 1,
-    email,
-    program_slug: programSlug,
-    created_at: new Date().toISOString()
-  };
-  
-  waitlist.push(newEntry);
-  return { ...newEntry };
 };
 
 export const removeFromWaitlist = async (id) => {

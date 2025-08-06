@@ -73,12 +73,16 @@ const ProgramMasterDetailPage = () => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     loadProgramData();
+    // Auto-populate email for authenticated users
+    if (isAuthenticated && user?.email) {
+      setEmail(user.email);
+    }
   }, [slug, isAuthenticated, user]);
 
   // Handle waitlist join
-  const handleJoinWaitlist = async (e) => {
+const handleJoinWaitlist = async (e) => {
     e.preventDefault();
     if (!email.trim()) {
       toast.error("Please enter your email address");
@@ -90,9 +94,9 @@ const ProgramMasterDetailPage = () => {
       await addToWaitlist({
         email: email.trim(),
         program_slug: slug,
-        program_name: program?.title || slug
+        ...(isAuthenticated && user?.Id && { user_id: user.Id })
       });
-      toast.success("Successfully joined the waitlist!");
+      toast.success("대기자 명단에 등록되었습니다");
       setEmail("");
     } catch (error) {
       console.error("Error joining waitlist:", error.message);
