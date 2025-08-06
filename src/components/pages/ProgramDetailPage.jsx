@@ -21,9 +21,20 @@ const ProgramDetailPage = ({ currentUser }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
-  const [isJoining, setIsJoining] = useState(false);
+const [isJoining, setIsJoining] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    category: "",
+    level: "beginner",
+    duration: "",
+    video_url: "",
+    embed_url: "",
+    cohort_number: "",
+    sort_order: ""
+  });
   // Helper function to check if user has access to lectures
   const hasLectureAccess = () => {
     if (!currentUser) return false;
@@ -41,9 +52,61 @@ const ProgramDetailPage = ({ currentUser }) => {
     return currentUser.role === "member" || currentUser.role === "both";
   };
 
-  const handleAddLecture = () => {
-    navigate('/admin/lectures');
-    toast.success('Redirecting to lecture management...');
+const handleAddLecture = () => {
+    setFormData({
+      title: "",
+      description: "",
+      category: "",
+      level: "beginner",
+      duration: "",
+      video_url: "",
+      embed_url: "",
+      cohort_number: "",
+      sort_order: "",
+      program_id: program?.Id || ""
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate embed_url starts with https://
+    if (formData.embed_url && !formData.embed_url.startsWith('https://')) {
+      toast.error('Embed URL must start with https://');
+      return;
+    }
+    
+    const submitData = {
+      ...formData,
+      duration: parseInt(formData.duration) || 0,
+      program_id: parseInt(formData.program_id),
+      sort_order: formData.sort_order ? parseInt(formData.sort_order) : null
+    };
+    
+    // Only include cohort_number if level is master
+    if (formData.level !== 'master' && formData.level !== 'master_common') {
+      delete submitData.cohort_number;
+    }
+    
+    try {
+      const { createLecture } = await import('@/services/api/lectureService');
+      await createLecture(submitData);
+      setIsModalOpen(false);
+      toast.success("Lecture created successfully!");
+      // Refresh lectures list
+      await loadProgramData();
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 const loadProgramData = async () => {
     try {
@@ -331,7 +394,149 @@ const loadProgramData = async () => {
             </div>
           </div>
         </div>
-      </div>
+</div>
+
+      {/* Add Lecture Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-navy-card rounded-xl p-6 w-full max-w-2xl border border-electric/20 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">Add New Lecture</h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <ApperIcon name="X" size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                    Program (Current)
+                  </label>
+                  <div className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-gray-300">
+                    {program?.title || program?.Name || 'Current Program'}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                    Level *
+                  </label>
+                  <select
+                    name="level"
+                    value={formData.level}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
+                    required
+                  >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="master_common">Master Common</option>
+                    <option value="master">Master</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Conditional cohort_number field - only show when level is master */}
+              {(formData.level === 'master' || formData.level === 'master_common') && (
+                <FormField
+                  label="기수 (Cohort Number)"
+                  name="cohort_number"
+                  value={formData.cohort_number}
+                  onChange={handleInputChange}
+                  placeholder="1"
+                />
+              )}
+
+              <FormField
+                label="카테고리 (Category) *"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                placeholder="e.g., Mindset, Business"
+                required
+              />
+
+              <FormField
+                label="강의 제목 (Title) *"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+              />
+
+              <FormField
+                label="영상 URL (Embed URL) *"
+                name="embed_url"
+                value={formData.embed_url}
+                onChange={handleInputChange}
+                placeholder="https://example.com/embed"
+                required
+              />
+
+              <FormField
+                label="정렬 번호 (Sort Order)"
+                name="sort_order"
+                type="number"
+                value={formData.sort_order}
+                onChange={handleInputChange}
+                placeholder="1"
+              />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
+                  placeholder="Lecture description..."
+                />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <FormField
+                  label="Duration (seconds)"
+                  name="duration"
+                  type="number"
+                  value={formData.duration}
+                  onChange={handleInputChange}
+                  placeholder="3600"
+                />
+                
+                <FormField
+                  label="Video URL"
+                  name="video_url"
+                  value={formData.video_url}
+                  onChange={handleInputChange}
+                  placeholder="https://example.com/video"
+                />
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="flex-1"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">
+                  Create Lecture
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
