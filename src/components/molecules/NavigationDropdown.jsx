@@ -51,8 +51,7 @@ const NavigationDropdown = ({ label, items, className = "", currentUser }) => {
   const getDropdownItems = () => {
     if (label === 'Program') {
       const programItems = [];
-      
-      // Check if there are any member programs
+// Check if there are any member programs
       const memberPrograms = programs.filter(p => p.type === 'member');
       if (memberPrograms.length > 0) {
         programItems.push({

@@ -10,38 +10,45 @@ import Empty from "@/components/ui/Empty";
 import Button from "@/components/atoms/Button";
 
 export default function ProgramPage({ filterType = 'all', currentUser = null }) {
-  const navigate = useNavigate()
-  const [programs, setPrograms] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
-  const isAdmin = currentUser?.is_admin || false
-async function loadPrograms() {
+  const navigate = useNavigate();
+  const [programs, setPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const isAdmin = currentUser?.is_admin || false;
+
+  async function loadPrograms() {
     try {
-      setLoading(true)
-      setError("");
-      const data = await getPrograms();
+      setLoading(true);
+      setError(null);
       
-      // Filter programs based on filterType
-      let filteredPrograms = data;
-      if (filterType === 'member') {
-        filteredPrograms = data.filter(program => program.type === 'member');
-      } else if (filterType === 'master') {
-        filteredPrograms = data.filter(program => program.type === 'master');
+      const response = await getPrograms();
+      if (response && response.length > 0) {
+        // Filter programs based on filterType
+        let filteredPrograms = response;
+        if (filterType === 'member') {
+          filteredPrograms = response.filter(program => program.type === 'member');
+        } else if (filterType === 'master') {
+          filteredPrograms = response.filter(program => program.type === 'master');
+        }
+        setPrograms(filteredPrograms);
+      } else {
+        setPrograms([]);
       }
-      // filterType === 'all' shows all programs (default)
-      
-      setPrograms(filteredPrograms);
     } catch (err) {
-      setError(err.message);
+      console.error("Error loading programs:", err);
+      setError(err.message || "Failed to load programs");
+      setPrograms([]);
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  // Load programs on component mount and when refreshTrigger changes
 
 useEffect(() => {
     loadPrograms();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, filterType]);
 
   // Expose refresh function globally for state invalidation
   useEffect(() => {
@@ -198,6 +205,6 @@ useEffect(() => {
           </div>
         </div>
       </div>
-    </div>
+</div>
   );
-};
+}

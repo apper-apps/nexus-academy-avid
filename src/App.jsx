@@ -167,9 +167,9 @@ function AppContent() {
           <Route path="/callback" element={<Callback />} />
           <Route path="/error" element={<ErrorPage />} />
           <Route path="/prompt-password/:appId/:emailAddress/:provider" element={<PromptPassword />} />
-          <Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
+<Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
           <Route path="/" element={<HomePage />} />
-          <Route path="/program" element={<ProgramPage />} />
+          <Route path="/program" element={<ProgramPage filterType="member" />} />
           <Route path="/program/master" element={<ProgramPage filterType="master" />} />
           <Route path="/program/:slug" element={<ProgramDetailPage />} />
           <Route path="/program/master/:slug" element={<ProgramMasterDetailPage />} />
