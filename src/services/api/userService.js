@@ -77,7 +77,7 @@ const response = await apperClient.getRecordById("app_User", parseInt(id), param
     }
     
     return response.data;
-  } catch (error) {
+} catch (error) {
     if (error?.response?.data?.message) {
       console.error(`Error fetching user with ID ${id}:`, error.response.data.message);
       throw new Error(`Failed to fetch user: ${error.response.data.message}`);
@@ -85,6 +85,7 @@ const response = await apperClient.getRecordById("app_User", parseInt(id), param
       console.error(`Error fetching user with ID ${id}:`, error.message);
       throw new Error(error.message || `User with ID ${id} not found`);
     }
+  }
 };
 
 export const createUser = async (userData) => {
