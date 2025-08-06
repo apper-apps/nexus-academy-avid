@@ -1,22 +1,84 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 import { getPrograms } from "@/services/api/programService";
 import { data } from "@/services/api/postService";
+import { createLecture } from "@/services/api/lectureService";
 import ApperIcon from "@/components/ApperIcon";
 import ProgramCard from "@/components/molecules/ProgramCard";
+import FormField from "@/components/molecules/FormField";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Button from "@/components/atoms/Button";
 
-export default function ProgramPage({ filterType = 'all', currentUser = null }) {
+export default function ProgramPage({ filterType = 'all' }) {
   const navigate = useNavigate();
-  const [programs, setPrograms] = useState([]);
+const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    category: "",
+    title: "",
+    embed_url: "",
+    sort_order: ""
+  });
+  
+  const { user: currentUser } = useSelector((state) => state.user);
   const isAdmin = currentUser?.is_admin || false;
+  const isMembershipPage = filterType === "member";
 
+  const handleAddLecture = () => {
+    setFormData({
+      category: "",
+      title: "",
+      embed_url: "",
+      sort_order: ""
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate embed_url starts with https://
+    if (!formData.embed_url.startsWith('https://')) {
+      toast.error('Embed URL must start with https://');
+      return;
+    }
+    
+    const submitData = {
+      Name: formData.title,
+      title: formData.title,
+      category: formData.category,
+      embed_url: formData.embed_url,
+      sort_order: formData.sort_order ? parseInt(formData.sort_order) : null,
+      level: "membership",
+      program_slug: "membership",
+      created_at: new Date().toISOString()
+    };
+    
+    try {
+      await createLecture(submitData);
+      setIsModalOpen(false);
+      toast.success("Lecture created successfully!");
+      // Trigger refresh of the programs list
+      setRefreshTrigger(prev => prev + 1);
+    } catch (error) {
+      toast.error(error.message || "Failed to create lecture");
+    }
+  };
   async function loadPrograms() {
     try {
       setLoading(true);
@@ -131,13 +193,23 @@ useEffect(() => {
             {headerContent.badge}
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">
-            {headerContent.title}
-            <span className="block bg-gradient-to-r from-electric to-blue-400 bg-clip-text text-transparent">
-              {headerContent.subtitle}
-            </span>
-          </h1>
-          
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6 sm:mb-0">
+              {headerContent.title}
+              <span className="block bg-gradient-to-r from-electric to-blue-400 bg-clip-text text-transparent">
+                {headerContent.subtitle}
+              </span>
+            </h1>
+            {isAdmin && isMembershipPage && (
+              <Button
+                onClick={handleAddLecture}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shrink-0"
+              >
+                <ApperIcon name="Plus" size={16} />
+                Add Lecture
+              </Button>
+            )}
+          </div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
             {headerContent.description}
           </p>
@@ -216,7 +288,84 @@ useEffect(() => {
             </Button>
           </div>
         </div>
-      </div>
 </div>
+
+      {/* Add Lecture Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-navy-card rounded-xl p-6 w-full max-w-2xl border border-electric/20 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">Add New Lecture</h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <ApperIcon name="X" size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <FormField
+                label="Category *"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                placeholder="e.g., Mindset, Business"
+                required
+              />
+
+              <FormField
+                label="Title *"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Lecture title"
+                required
+              />
+
+              <FormField
+                label="Embed URL *"
+                name="embed_url"
+                value={formData.embed_url}
+                onChange={handleInputChange}
+                placeholder="https://example.com/embed"
+                required
+              />
+
+              <FormField
+                label="Sort Order"
+                name="sort_order"
+                type="number"
+                value={formData.sort_order}
+                onChange={handleInputChange}
+                placeholder="1"
+              />
+
+              <div className="bg-gray-800/50 p-4 rounded-lg">
+                <div className="text-sm text-gray-300 mb-2">Automatic Settings:</div>
+                <div className="text-xs text-gray-400 space-y-1">
+                  <div>• Program Slug: membership</div>
+                  <div>• Level: membership</div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3 pt-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="flex-1"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">
+                  Save Lecture
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
