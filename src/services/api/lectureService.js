@@ -13,7 +13,7 @@ export const getLectures = async () => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
         { field: { Name: "Name" } },
         { field: { Name: "title" } },
         { field: { Name: "description" } },
@@ -21,8 +21,9 @@ export const getLectures = async () => {
         { field: { Name: "level" } },
         { field: { Name: "duration" } },
         { field: { Name: "video_url" } },
-{ field: { Name: "embed_url" } },
+        { field: { Name: "embed_url" } },
         { field: { Name: "cohort_number" } },
+        { field: { Name: "sort_order" } },
         { field: { Name: "created_at" } },
         { 
           field: { Name: "program_id" },
@@ -53,7 +54,7 @@ export const getLectures = async () => {
 export const getLectureById = async (id) => {
   try {
     const apperClient = getApperClient();
-    const params = {
+const params = {
       fields: [
         { field: { Name: "Name" } },
         { field: { Name: "title" } },
@@ -62,8 +63,9 @@ export const getLectureById = async (id) => {
         { field: { Name: "level" } },
         { field: { Name: "duration" } },
         { field: { Name: "video_url" } },
-{ field: { Name: "embed_url" } },
+        { field: { Name: "embed_url" } },
         { field: { Name: "cohort_number" } },
+        { field: { Name: "sort_order" } },
         { field: { Name: "created_at" } },
         { 
           field: { Name: "program_id" },
@@ -94,16 +96,17 @@ export const getLecturesByProgram = async (programId) => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
         { field: { Name: "Name" } },
         { field: { Name: "title" } },
         { field: { Name: "description" } },
         { field: { Name: "category" } },
         { field: { Name: "level" } },
         { field: { Name: "duration" } },
-{ field: { Name: "video_url" } },
+        { field: { Name: "video_url" } },
         { field: { Name: "embed_url" } },
         { field: { Name: "cohort_number" } },
+        { field: { Name: "sort_order" } },
         { field: { Name: "created_at" } }
       ],
       where: [
@@ -137,7 +140,7 @@ export const getLecturesByCategory = async (category) => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
         { field: { Name: "Name" } },
         { field: { Name: "title" } },
         { field: { Name: "description" } },
@@ -146,6 +149,8 @@ export const getLecturesByCategory = async (category) => {
         { field: { Name: "duration" } },
         { field: { Name: "video_url" } },
         { field: { Name: "embed_url" } },
+        { field: { Name: "cohort_number" } },
+        { field: { Name: "sort_order" } },
         { field: { Name: "created_at" } }
       ],
       where: [
@@ -178,7 +183,7 @@ export const getLecturesByCategory = async (category) => {
 export const createLecture = async (lectureData) => {
   try {
     const apperClient = getApperClient();
-    const params = {
+const params = {
       records: [{
         Name: lectureData.title,
         title: lectureData.title,
@@ -188,6 +193,8 @@ export const createLecture = async (lectureData) => {
         duration: parseInt(lectureData.duration),
         video_url: lectureData.video_url,
         embed_url: lectureData.embed_url || lectureData.video_url,
+        cohort_number: lectureData.cohort_number || null,
+        sort_order: lectureData.sort_order ? parseInt(lectureData.sort_order) : null,
         created_at: new Date().toISOString(),
         program_id: parseInt(lectureData.program_id)
       }]
@@ -254,6 +261,12 @@ export const updateLecture = async (id, lectureData) => {
     }
     if (lectureData.embed_url !== undefined) {
       updateData.embed_url = lectureData.embed_url;
+    }
+    if (lectureData.cohort_number !== undefined) {
+      updateData.cohort_number = lectureData.cohort_number;
+    }
+    if (lectureData.sort_order !== undefined) {
+      updateData.sort_order = parseInt(lectureData.sort_order);
     }
     if (lectureData.program_id !== undefined) {
       updateData.program_id = parseInt(lectureData.program_id);

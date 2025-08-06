@@ -14,13 +14,16 @@ const AdminLecturesTab = () => {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLecture, setEditingLecture] = useState(null);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
     level: "beginner",
     duration: "",
     video_url: "",
+    embed_url: "",
+    cohort_number: "",
+    sort_order: "",
     program_id: ""
   });
 
@@ -69,7 +72,7 @@ const AdminLecturesTab = () => {
     loadData();
   }, []);
 
-  const resetForm = () => {
+const resetForm = () => {
     setFormData({
       title: "",
       description: "",
@@ -77,6 +80,9 @@ const AdminLecturesTab = () => {
       level: "beginner",
       duration: "",
       video_url: "",
+      embed_url: "",
+      cohort_number: "",
+      sort_order: "",
       program_id: ""
     });
     setEditingLecture(null);
@@ -88,13 +94,16 @@ const AdminLecturesTab = () => {
   };
 
   const handleEdit = (lecture) => {
-    setFormData({
+setFormData({
       title: lecture.title,
       description: lecture.description,
       category: lecture.category,
       level: lecture.level,
       duration: lecture.duration.toString(),
       video_url: lecture.video_url,
+      embed_url: lecture.embed_url || "",
+      cohort_number: lecture.cohort_number || "",
+      sort_order: lecture.sort_order ? lecture.sort_order.toString() : "",
       program_id: lecture.program_id.toString()
     });
     setEditingLecture(lecture);
@@ -113,14 +122,26 @@ const AdminLecturesTab = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate embed_url starts with https://
+    if (formData.embed_url && !formData.embed_url.startsWith('https://')) {
+      toast.error('Embed URL must start with https://');
+      return;
+    }
     
     const submitData = {
       ...formData,
       duration: parseInt(formData.duration),
-      program_id: parseInt(formData.program_id)
+      program_id: parseInt(formData.program_id),
+      sort_order: formData.sort_order ? parseInt(formData.sort_order) : null
     };
+    
+    // Only include cohort_number if level is master
+    if (formData.level !== 'master') {
+      delete submitData.cohort_number;
+    }
     
     try {
       if (editingLecture) {
@@ -135,6 +156,8 @@ const AdminLecturesTab = () => {
       
       setIsModalOpen(false);
       resetForm();
+      // Refresh the lecture list
+      await loadData();
     } catch (error) {
       toast.error(error.message);
     }
@@ -190,70 +213,80 @@ const AdminLecturesTab = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+{/* Pre-filled read-only fields */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                    Program (Read-only)
+                  </label>
+                  <div className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-gray-300">
+                    {editingLecture ? 
+                      programs.find(p => p.Id === editingLecture.program_id)?.slug || 'Unknown' 
+                      : formData.program_id ? programs.find(p => p.Id === parseInt(formData.program_id))?.slug : 'Select a program first'}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                    Level (Read-only)
+                  </label>
+                  <div className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-gray-300">
+                    {formData.level}
+                  </div>
+                </div>
+              </div>
+
+              {/* Conditional cohort_number field - only show when level is master */}
+              {(formData.level === 'master' || formData.level === 'master_common') && (
+                <FormField
+                  label="기수 (Cohort Number)"
+                  name="cohort_number"
+                  value={formData.cohort_number}
+                  onChange={handleInputChange}
+                  placeholder="1"
+                />
+              )}
+
               <FormField
-                label="Title"
+                label="카테고리 (Category) *"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                placeholder="e.g., Mindset, Business"
+                required
+              />
+
+              <FormField
+                label="강의 제목 (Title) *"
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
                 required
               />
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-200 mb-2">
-                  Description
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
-                  required
-                />
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                <FormField
-                  label="Category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Mindset, Business"
-                  required
-                />
-                
+
+              <FormField
+                label="영상 URL (Embed URL) *"
+                name="embed_url"
+                value={formData.embed_url}
+                onChange={handleInputChange}
+                placeholder="https://example.com/embed"
+                required
+              />
+
+              <FormField
+                label="정렬 번호 (Sort Order)"
+                name="sort_order"
+                type="number"
+                value={formData.sort_order}
+                onChange={handleInputChange}
+                placeholder="1"
+              />
+
+              {/* Hidden program selector for new lectures */}
+              {!editingLecture && (
                 <div>
                   <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Level
-                  </label>
-                  <select
-                    name="level"
-                    value={formData.level}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
-                  >
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                    <option value="master_common">Master Common</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                <FormField
-                  label="Duration (seconds)"
-                  name="duration"
-                  type="number"
-                  value={formData.duration}
-                  onChange={handleInputChange}
-                  placeholder="3600"
-                  required
-                />
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Program
+                    Program *
                   </label>
                   <select
                     name="program_id"
@@ -270,16 +303,61 @@ const AdminLecturesTab = () => {
                     ))}
                   </select>
                 </div>
+              )}
+
+              {/* Hidden level selector for new lectures */}
+              {!editingLecture && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                    Level *
+                  </label>
+                  <select
+                    name="level"
+                    value={formData.level}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
+                    required
+                  >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="master_common">Master Common</option>
+                    <option value="master">Master</option>
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
+                />
               </div>
-              
-              <FormField
-                label="Video URL"
-                name="video_url"
-                value={formData.video_url}
-                onChange={handleInputChange}
-                placeholder="https://example.com/video"
-                required
-              />
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <FormField
+                  label="Duration (seconds)"
+                  name="duration"
+                  type="number"
+                  value={formData.duration}
+                  onChange={handleInputChange}
+                  placeholder="3600"
+                />
+                
+                <FormField
+                  label="Video URL"
+                  name="video_url"
+                  value={formData.video_url}
+                  onChange={handleInputChange}
+                  placeholder="https://example.com/video"
+                />
+              </div>
 
               <div className="flex space-x-3 pt-4">
                 <Button
