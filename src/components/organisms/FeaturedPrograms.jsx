@@ -77,7 +77,8 @@ const FeaturedPrograms = () => {
     }
   };
 
-  const handleAccordionToggle = (categoryName) => {
+const handleAccordionToggle = (categoryName) => {
+    // Ensure only one accordion is open at a time
     setOpenAccordion(openAccordion === categoryName ? null : categoryName);
   };
 
@@ -221,9 +222,9 @@ const FeaturedPrograms = () => {
                               {/* Video Embed */}
                               <div className="lg:w-1/2">
                                 <div className="aspect-video bg-navy-light rounded-lg overflow-hidden border border-gray-600">
-                                  {lecture.video_url ? (
+{lecture.embed_url ? (
                                     <iframe
-                                      src={lecture.video_url}
+                                      src={lecture.embed_url}
                                       className="w-full h-full"
                                       frameBorder="0"
                                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
