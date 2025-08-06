@@ -74,9 +74,9 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-8">
-              <NavLink to="/">Home</NavLink>
+<NavLink to="/">Home</NavLink>
               
-<NavigationDropdown 
+              <NavigationDropdown 
                 label="Program"
                 items={programDropdownItems}
                 currentUser={user}
@@ -85,7 +85,7 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
               <NavLink to="/insight">Insight</NavLink>
               <NavLink to="/reviews">Reviews</NavLink>
               
-{user && (
+              {user && (
                 <>
                   <NavLink to="/profile">Profile</NavLink>
                   {user.is_admin && (

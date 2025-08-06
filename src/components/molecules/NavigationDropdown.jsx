@@ -48,42 +48,27 @@ const NavigationDropdown = ({ label, items, className = "", currentUser }) => {
   };
 
 // Generate dynamic program items if this is the Program dropdown
-  const getDropdownItems = () => {
+const getDropdownItems = () => {
     if (label === 'Program') {
       const programItems = [];
-// Check if there are any member programs
-      const memberPrograms = programs.filter(p => p.type === 'member');
-      if (memberPrograms.length > 0) {
-        programItems.push({
-          title: "멤버십",
-          description: "기초를 다지는 멤버십 프로그램",
-          icon: "Users",
-          href: "/program"
-        });
-      }
+      
+      // Always show membership option for public access
+      programItems.push({
+        title: "멤버십",
+        description: "기초를 다지는 멤버십 프로그램",
+        icon: "Users",
+        href: "/program"
+      });
 
-      // Check if there are any master programs  
-      const masterPrograms = programs.filter(p => p.type === 'master');
-      if (masterPrograms.length > 0) {
-        programItems.push({
-          title: "마스터",
-          description: "전문 스킬을 마스터하는 프로그램",
-          icon: "Crown",
-          href: "/program/master"
-        });
-      }
+      // Always show master option for public access
+      programItems.push({
+        title: "마스터",
+        description: "전문 스킬을 마스터하는 프로그램",
+        icon: "Crown",
+        href: "/program/master"
+      });
 
-      // Show all programs option if no specific programs found but programs exist
-      if (programItems.length === 0 && programs.length > 0) {
-        programItems.push({
-          title: "모든 프로그램",
-          description: "전체 프로그램 보기",
-          icon: "BookOpen",
-          href: "/program"
-        });
-      }
-
-      // Add admin option if applicable
+      // Add admin option only if user is authenticated and admin
       if (currentUser?.is_admin) {
         programItems.push({
           title: "➕ 프로그램 추가",
