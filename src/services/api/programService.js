@@ -13,11 +13,14 @@ export const getPrograms = async () => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
         { field: { Name: "description" } },
+        { field: { Name: "thumbnail_url" } },
+        { field: { Name: "description_short" } },
+        { field: { Name: "description_long" } },
         { field: { Name: "price" } },
         { field: { Name: "has_common_course" } },
         { field: { Name: "type" } },
@@ -48,11 +51,14 @@ export const getProgramById = async (id) => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
         { field: { Name: "description" } },
+        { field: { Name: "thumbnail_url" } },
+        { field: { Name: "description_short" } },
+        { field: { Name: "description_long" } },
         { field: { Name: "price" } },
         { field: { Name: "has_common_course" } },
         { field: { Name: "type" } },
@@ -82,11 +88,14 @@ export const getProgramBySlug = async (slug) => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
         { field: { Name: "description" } },
+        { field: { Name: "thumbnail_url" } },
+        { field: { Name: "description_short" } },
+        { field: { Name: "description_long" } },
         { field: { Name: "price" } },
         { field: { Name: "has_common_course" } },
         { field: { Name: "type" } },
@@ -132,6 +141,9 @@ export const createProgram = async (programData) => {
         slug: programData.slug,
         title: programData.title,
         description: programData.description,
+        thumbnail_url: programData.thumbnail_url || "",
+        description_short: programData.description_short || "",
+        description_long: programData.description_long || "",
         price: parseFloat(programData.price),
         has_common_course: programData.has_common_course || false,
         type: programData.type,
@@ -277,8 +289,11 @@ export const getNonMembershipPrograms = async () => {
       fields: [
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
-        { field: { Name: "title" } },
+{ field: { Name: "title" } },
         { field: { Name: "description" } },
+        { field: { Name: "thumbnail_url" } },
+        { field: { Name: "description_short" } },
+        { field: { Name: "description_long" } },
         { field: { Name: "price" } },
         { field: { Name: "has_common_course" } },
         { field: { Name: "type" } },

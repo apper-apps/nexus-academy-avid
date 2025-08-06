@@ -12,10 +12,13 @@ const AdminProgramsTab = () => {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState(null);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     title: "",
     slug: "",
     description: "",
+    thumbnail_url: "",
+    description_short: "",
+    description_long: "",
     price: "",
     type: "member",
     has_common_course: false
@@ -53,11 +56,14 @@ const AdminProgramsTab = () => {
     loadPrograms();
   }, []);
 
-  const resetForm = () => {
+const resetForm = () => {
     setFormData({
       title: "",
       slug: "",
       description: "",
+      thumbnail_url: "",
+      description_short: "",
+      description_long: "",
       price: "",
       type: "member",
       has_common_course: false
@@ -70,11 +76,14 @@ const AdminProgramsTab = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (program) => {
+const handleEdit = (program) => {
     setFormData({
       title: program.title,
       slug: program.slug,
       description: program.description,
+      thumbnail_url: program.thumbnail_url || "",
+      description_short: program.description_short || "",
+      description_long: program.description_long || "",
       price: program.price.toString(),
       type: program.type,
       has_common_course: program.has_common_course
@@ -189,18 +198,54 @@ const AdminProgramsTab = () => {
                   required
                 />
               </div>
+<FormField
+                label="Thumbnail URL"
+                name="thumbnail_url"
+                value={formData.thumbnail_url}
+                onChange={handleInputChange}
+                placeholder="https://example.com/image.jpg"
+              />
               
               <div>
                 <label className="block text-sm font-medium text-gray-200 mb-2">
-                  Description
+                  Short Description
+                </label>
+                <textarea
+                  name="description_short"
+                  value={formData.description_short}
+                  onChange={handleInputChange}
+                  rows={2}
+                  className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
+                  placeholder="Brief program summary..."
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Long Description
+                </label>
+                <textarea
+                  name="description_long"
+                  value={formData.description_long}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
+                  placeholder="Detailed program information..."
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Description (Legacy)
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  rows={4}
+                  rows={3}
                   className="w-full px-4 py-2.5 bg-navy-card border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric focus:border-electric"
-                  required
                 />
               </div>
               
