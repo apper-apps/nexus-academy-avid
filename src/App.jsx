@@ -96,7 +96,7 @@ function AppContent() {
 } else {
 // User is not authenticated
           // Define public routes that don't require authentication
-          const publicRoutes = ['/', '/program', '/insight', '/reviews'];
+          const publicRoutes = ['/', '/program', '/program/:slug', '/program/master', '/program/master/:slug', '/lecture/:id', '/insight', '/insight/:slug', '/reviews'];
           const isPublicRoute = publicRoutes.some(route => 
             currentPath === route || currentPath.startsWith(route + '?') || currentPath.startsWith(route + '/')
           );
