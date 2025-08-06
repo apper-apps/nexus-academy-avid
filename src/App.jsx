@@ -73,7 +73,8 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/users" element={<AdminPage />} />
-          <Route path="/admin/programs" element={<AdminPage />} />
+<Route path="/admin/programs" element={<AdminPage />} />
+          <Route path="/admin/programs/new" element={<AdminPage />} />
           <Route path="/admin/lectures" element={<AdminPage />} />
           <Route path="/admin/posts" element={<AdminPage />} />
         </Routes>

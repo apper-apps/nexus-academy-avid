@@ -10,25 +10,25 @@ const TopNavigation = ({ currentUser, onLogin, onSignup, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const programDropdownItems = [
+const programDropdownItems = [
     {
-      title: "Membership Program",
+      title: "Membership",
       description: "Build your foundation",
       icon: "Users",
       href: "/program/membership"
     },
     {
-      title: "Text Influencer Master",
+      title: "Master",
       description: "Master communication",
       icon: "MessageSquare",
       href: "/program/text-influencer"
     },
-    {
-      title: "All Programs",
-      description: "Browse everything",
-      icon: "Grid3X3",
-      href: "/program"
-    }
+    ...(currentUser?.is_admin ? [{
+      title: "➕ Add Program",
+      description: "Create new program",
+      icon: "Plus",
+      href: "/admin/programs/new"
+    }] : [])
   ];
 
   const isActiveLink = (path) => {

@@ -1,4 +1,5 @@
 import programData from "@/services/mockData/programs.json";
+import { toast } from 'react-toastify';
 
 let programs = [...programData];
 
@@ -28,15 +29,21 @@ export const getProgramBySlug = async (slug) => {
 };
 
 export const createProgram = async (programData) => {
-  await delay(400);
-  const maxId = programs.length > 0 ? Math.max(...programs.map(p => p.Id)) : 0;
-  const newProgram = {
-    ...programData,
-    Id: maxId + 1,
-    created_at: new Date().toISOString()
-  };
-  programs.push(newProgram);
-  return { ...newProgram };
+  try {
+    await delay(400);
+    const maxId = programs.length > 0 ? Math.max(...programs.map(p => p.Id)) : 0;
+    const newProgram = {
+      ...programData,
+      Id: maxId + 1,
+      created_at: new Date().toISOString()
+    };
+    programs.push(newProgram);
+    toast.success(`Program "${newProgram.title}" created successfully!`);
+    return { ...newProgram };
+  } catch (error) {
+    toast.error("Failed to create program. Please try again.");
+    throw error;
+  }
 };
 
 export const updateProgram = async (id, programData) => {
