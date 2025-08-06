@@ -61,13 +61,12 @@ function App() {
           onSignup={handleSignup}
           onLogout={handleLogout}
         />
-        
-        <Routes>
-<Route path="/" element={<HomePage />} />
-          <Route path="/program" element={<ProgramPage />} />
-<Route path="/program" element={<ProgramPage />} />
+<Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/program" element={<ProgramPage currentUser={currentUser} />} />
       <Route path="/program/master" element={<ProgramPage currentUser={currentUser} filterType="master" />} />
       <Route path="/program/:slug" element={<ProgramDetailPage currentUser={currentUser} />} />
+      <Route path="/lecture/:id" element={<LectureDetailPage />} />
       <Route path="/lecture/:id" element={<LectureDetailPage />} />
       <Route path="/insight" element={<InsightPage />} />
       <Route path="/insight/:slug" element={<InsightPage />} />

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPrograms } from "@/services/api/programService";
 import { data } from "@/services/api/postService";
-import { useAuth } from "@/contexts/AuthContext";
 import ApperIcon from "@/components/ApperIcon";
 import ProgramCard from "@/components/molecules/ProgramCard";
 import Loading from "@/components/ui/Loading";
@@ -10,16 +9,16 @@ import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Button from "@/components/atoms/Button";
 
-const ProgramPage = () => {
-  const [programs, setPrograms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { currentUser, isAdmin } = useAuth();
-
-  const loadPrograms = async () => {
+export default function ProgramPage({ filterType = 'all', currentUser = null }) {
+  const navigate = useNavigate()
+  const [programs, setPrograms] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const isAdmin = currentUser?.is_admin || false
+  
+  async function loadPrograms() {
     try {
-      setLoading(true);
+      setLoading(true)
       setError("");
       const data = await getPrograms();
       setPrograms(data);
@@ -157,5 +156,3 @@ const ProgramPage = () => {
     </div>
   );
 };
-
-export default ProgramPage;
