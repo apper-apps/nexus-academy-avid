@@ -17,18 +17,33 @@ const LectureDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadLectureData = async () => {
+const loadLectureData = async () => {
     try {
       setLoading(true);
       setError("");
       
       const lectureData = await getLectureById(id);
+      
+      if (!lectureData) {
+        throw new Error(`Lecture with ID ${id} not found`);
+      }
+      
       setLecture(lectureData);
       
-      const programData = await getProgramById(lectureData.program_id);
-      setProgram(programData);
+      // Only try to load program if lecture has a program_id
+      if (lectureData.program_id) {
+        try {
+          const programData = await getProgramById(lectureData.program_id);
+          setProgram(programData);
+        } catch (programErr) {
+          console.error("Error loading associated program:", programErr.message);
+          // Don't fail the entire page if program can't be loaded
+          setProgram(null);
+        }
+      }
     } catch (err) {
-      setError(err.message);
+      console.error("Error loading lecture data:", err.message);
+      setError(err.message || "Failed to load lecture. The lecture record may not exist.");
     } finally {
       setLoading(false);
     }

@@ -45,18 +45,35 @@ const ProgramDetailPage = ({ currentUser }) => {
     navigate('/admin/lectures');
     toast.success('Redirecting to lecture management...');
   };
-  const loadProgramData = async () => {
+const loadProgramData = async () => {
     try {
       setLoading(true);
       setError("");
       
       const programData = await getProgramBySlug(slug);
+      
+      if (!programData) {
+        throw new Error(`Program with slug "${slug}" not found`);
+      }
+      
       setProgram(programData);
       
-      const lectureData = await getLecturesByProgram(programData.Id);
-      setLectures(lectureData);
+      // Only try to load lectures if program exists and has an ID
+      if (programData.Id) {
+        try {
+          const lectureData = await getLecturesByProgram(programData.Id);
+          setLectures(lectureData || []);
+        } catch (lectureErr) {
+          console.error("Error loading program lectures:", lectureErr.message);
+          // Don't fail the entire page if lectures can't be loaded
+          setLectures([]);
+        }
+      } else {
+        setLectures([]);
+      }
     } catch (err) {
-      setError(err.message);
+      console.error("Error loading program data:", err.message);
+      setError(err.message || "Failed to load program. The program may not exist.");
     } finally {
       setLoading(false);
     }

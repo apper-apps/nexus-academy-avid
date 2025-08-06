@@ -66,21 +66,29 @@ fields: [
       ]
     };
     
-    const response = await apperClient.getRecordById("program", parseInt(id), params);
+const response = await apperClient.getRecordById("program", parseInt(id), params);
     
     if (!response.success) {
-      console.error(response.message);
-      throw new Error(response.message);
+      const errorMessage = response.message || `Program with ID ${id} not found`;
+      console.error(`Error fetching program with ID ${id}:`, errorMessage);
+      throw new Error(errorMessage);
+    }
+    
+    if (!response.data) {
+      const errorMessage = `Program record with ID ${id} does not exist`;
+      console.error(errorMessage);
+      throw new Error(errorMessage);
     }
     
     return response.data;
   } catch (error) {
     if (error?.response?.data?.message) {
       console.error(`Error fetching program with ID ${id}:`, error.response.data.message);
+      throw new Error(`Failed to fetch program: ${error.response.data.message}`);
     } else {
-      console.error(error.message);
+      console.error(`Error fetching program with ID ${id}:`, error.message);
+      throw new Error(error.message || `Program with ID ${id} not found`);
     }
-    throw error;
   }
 };
 

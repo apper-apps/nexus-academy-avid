@@ -62,22 +62,29 @@ export const getUserById = async (id) => {
       ]
     };
     
-    const response = await apperClient.getRecordById("app_User", parseInt(id), params);
+const response = await apperClient.getRecordById("app_User", parseInt(id), params);
     
     if (!response.success) {
-      console.error(response.message);
-      throw new Error(response.message);
+      const errorMessage = response.message || `User with ID ${id} not found`;
+      console.error(`Error fetching user with ID ${id}:`, errorMessage);
+      throw new Error(errorMessage);
+    }
+    
+    if (!response.data) {
+      const errorMessage = `User record with ID ${id} does not exist`;
+      console.error(errorMessage);
+      throw new Error(errorMessage);
     }
     
     return response.data;
   } catch (error) {
     if (error?.response?.data?.message) {
       console.error(`Error fetching user with ID ${id}:`, error.response.data.message);
+      throw new Error(`Failed to fetch user: ${error.response.data.message}`);
     } else {
-      console.error(error.message);
+      console.error(`Error fetching user with ID ${id}:`, error.message);
+      throw new Error(error.message || `User with ID ${id} not found`);
     }
-    throw error;
-  }
 };
 
 export const createUser = async (userData) => {
@@ -210,8 +217,9 @@ export const deleteUser = async (id) => {
     if (error?.response?.data?.message) {
       console.error("Error deleting user:", error.response.data.message);
     } else {
+} else {
       console.error(error.message);
     }
-throw error;
+    throw error;
   }
 };

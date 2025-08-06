@@ -23,20 +23,26 @@ const ProfilePage = () => {
 
   const currentUserId = 1; // Mock current user ID
 
-  const loadUser = async () => {
+const loadUser = async () => {
     try {
       setLoading(true);
       setError("");
       const userData = await getUserById(currentUserId);
+      
+      if (!userData) {
+        throw new Error(`Profile not found for user ID ${currentUserId}`);
+      }
+      
       setUser(userData);
       setFormData({
-        name: userData.name,
-        email: userData.email,
-        role: userData.role,
+        name: userData.Name || userData.name || "",
+        email: userData.email || "",
+        role: userData.role || "",
         master_cohort: userData.master_cohort || ""
       });
     } catch (err) {
-      setError(err.message);
+      console.error("Error loading user profile:", err.message);
+      setError(err.message || "Failed to load profile. The user record may not exist.");
     } finally {
       setLoading(false);
     }
