@@ -184,7 +184,8 @@ function AppContent() {
           <Route path="/admin/users" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
           <Route path="/admin/programs" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
           <Route path="/admin/programs/new" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-          <Route path="/admin/lectures" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+<Route path="/admin/lectures" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/admin/lectures/new" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
           <Route path="/admin/posts" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         </Routes>
         

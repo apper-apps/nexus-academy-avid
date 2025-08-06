@@ -149,16 +149,28 @@ useEffect(() => {
             <ProgramCard key={program.Id} program={program} currentUser={currentUser} />
           ))}
           {isAdmin && (
-            <div className="bg-navy-card rounded-2xl p-8 border-2 border-dashed border-electric/30 hover:border-electric/60 transition-colors cursor-pointer group"
-                 onClick={() => navigate('/admin/programs/new')}>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-electric/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-electric/30 transition-colors">
-                  <ApperIcon name="Plus" size={24} className="text-electric" />
+            <>
+              <div className="bg-navy-card rounded-2xl p-8 border-2 border-dashed border-electric/30 hover:border-electric/60 transition-colors cursor-pointer group"
+                   onClick={() => navigate('/admin/programs/new')}>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-electric/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-electric/30 transition-colors">
+                    <ApperIcon name="Plus" size={24} className="text-electric" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Add Program</h3>
+                  <p className="text-gray-400">Create a new program for your students</p>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Add Program</h3>
-                <p className="text-gray-400">Create a new master program for your students</p>
               </div>
-            </div>
+              <div className="bg-navy-card rounded-2xl p-8 border-2 border-dashed border-blue-400/30 hover:border-blue-400/60 transition-colors cursor-pointer group"
+                   onClick={() => navigate('/admin/lectures')}>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-400/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-400/30 transition-colors">
+                    <ApperIcon name="Play" size={24} className="text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Add Lecture</h3>
+                  <p className="text-gray-400">Create video lectures for your programs</p>
+                </div>
+              </div>
+            </>
           )}
         </div>
 
