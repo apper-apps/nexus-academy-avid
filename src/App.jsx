@@ -175,7 +175,8 @@ function AppContent() {
           <Route path="/program/master/:slug" element={<ProgramMasterDetailPage />} />
           <Route path="/lecture/:id" element={<LectureDetailPage />} />
           <Route path="/insight" element={<InsightPage />} />
-          <Route path="/insight/:slug" element={<InsightDetailPage />} />
+<Route path="/insight/:slug" element={<InsightDetailPage />} />
+          <Route path="/insight/new" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />

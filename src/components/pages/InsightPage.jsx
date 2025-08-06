@@ -80,36 +80,54 @@ const navigate = useNavigate();
         
         {/* Header */}
 {/* Header */}
-        <div className="text-center mb-12">
+<div className="text-center mb-12">
           <div className="inline-flex items-center px-4 py-2 bg-electric/10 border border-electric/30 rounded-full text-electric text-sm font-medium mb-6">
             <ApperIcon name="BookOpen" size={16} className="mr-2" />
             Strategic Insights
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">
-            Insights &
-            <span className="block bg-gradient-to-r from-electric to-blue-400 bg-clip-text text-transparent">
-              Strategic Thinking
-            </span>
-          </h1>
+          {/* Header with New Post Button */}
+          <div className="flex items-start justify-center mb-6 relative">
+            <div className="flex-1">
+              <h1 className="text-4xl md:text-6xl font-display font-bold text-white">
+                Insights &
+                <span className="block bg-gradient-to-r from-electric to-blue-400 bg-clip-text text-transparent">
+                  Strategic Thinking
+                </span>
+              </h1>
+            </div>
+            
+            {/* New Post Button - Admin Only - Top Right Position */}
+            {isAdmin && (
+              <div className="absolute top-0 right-0 hidden md:block">
+                <button 
+                  onClick={() => navigate('/insight/new')}
+                  className="flex items-center px-6 py-3 bg-electric hover:bg-electric-hover text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
+                >
+                  <ApperIcon name="Plus" size={16} className="mr-2" />
+                  새 글 작성
+                </button>
+              </div>
+            )}
+          </div>
           
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-            Practical insights, strategic frameworks, and actionable advice to accelerate 
-            your entrepreneurial journey and business growth.
-          </p>
-          
-          {/* New Post Button - Admin Only */}
+          {/* Mobile New Post Button - Admin Only */}
           {isAdmin && (
-            <div className="mb-8">
+            <div className="md:hidden mb-6">
               <button 
                 onClick={() => navigate('/insight/new')}
-                className="flex items-center px-4 py-2 bg-electric hover:bg-electric-hover text-white font-medium rounded-lg transition-colors mx-auto"
+                className="flex items-center px-6 py-3 bg-electric hover:bg-electric-hover text-white font-medium rounded-lg transition-colors mx-auto shadow-lg"
               >
                 <ApperIcon name="Plus" size={16} className="mr-2" />
-                새 글 (New Post)
+                새 글 작성
               </button>
             </div>
           )}
+          
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Practical insights, strategic frameworks, and actionable advice to accelerate 
+            your entrepreneurial journey and business growth.
+          </p>
         </div>
 
         {/* Search */}
