@@ -1,38 +1,58 @@
-import { createContext, useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import { useDispatch } from 'react-redux';
-import { setUser, clearUser } from './store/userSlice';
+import React, { createContext, useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import "@/index.css";
+import TopNavigation from "@/components/organisms/TopNavigation";
+import HomePage from "@/components/pages/HomePage";
+import Login from "@/components/pages/Login";
+import PromptPassword from "@/components/pages/PromptPassword";
+import InsightPage from "@/components/pages/InsightPage";
+import InsightDetailPage from "@/components/pages/InsightDetailPage";
+import ResetPassword from "@/components/pages/ResetPassword";
+import ProgramPage from "@/components/pages/ProgramPage";
+import ProfilePage from "@/components/pages/ProfilePage";
+import AdminPage from "@/components/pages/AdminPage";
+import ReviewsPage from "@/components/pages/ReviewsPage";
+import LectureDetailPage from "@/components/pages/LectureDetailPage";
+import ProgramMasterDetailPage from "@/components/pages/ProgramMasterDetailPage";
+import Callback from "@/components/pages/Callback";
+import ErrorPage from "@/components/pages/ErrorPage";
+import Signup from "@/components/pages/Signup";
+import ProgramDetailPage from "@/components/pages/ProgramDetailPage";
+import { clearUser, setUser } from "@/store/userSlice";
 
 // Layout Components
-import TopNavigation from '@/components/organisms/TopNavigation';
 
 // Page Components
-import HomePage from '@/components/pages/HomePage';
-import ProgramPage from '@/components/pages/ProgramPage';
-import ProgramDetailPage from '@/components/pages/ProgramDetailPage';
-import ProgramMasterDetailPage from '@/components/pages/ProgramMasterDetailPage';
-import LectureDetailPage from '@/components/pages/LectureDetailPage';
-import InsightPage from '@/components/pages/InsightPage';
-import InsightDetailPage from '@/components/pages/InsightDetailPage';
-import ReviewsPage from '@/components/pages/ReviewsPage';
-import ProfilePage from '@/components/pages/ProfilePage';
-import AdminPage from '@/components/pages/AdminPage';
-import Login from '@/components/pages/Login';
-import Signup from '@/components/pages/Signup';
-import Callback from '@/components/pages/Callback';
-import ErrorPage from '@/components/pages/ErrorPage';
-import ResetPassword from '@/components/pages/ResetPassword';
-import PromptPassword from '@/components/pages/PromptPassword';
 
 // Create auth context
 export const AuthContext = createContext(null);
+
+// Protected Route component for admin access
+const ProtectedRoute = ({ children }) => {
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!isAuthenticated || !user?.is_admin) {
+      toast.error('Admin only');
+      navigate('/');
+    }
+  }, [isAuthenticated, user, navigate]);
+  
+  // Don't render anything if not admin - redirect will happen
+  if (!isAuthenticated || !user?.is_admin) {
+    return null;
+  }
+  
+  return children;
+};
 
 function AppContent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isInitialized, setIsInitialized] = useState(false);
-
   // Initialize ApperUI once when the app loads
   useEffect(() => {
     const { ApperClient, ApperUI } = window.ApperSDK;
@@ -135,7 +155,7 @@ function AppContent() {
     <AuthContext.Provider value={authMethods}>
       <div className="min-h-screen bg-midnight">
         <TopNavigation />
-        <Routes>
+<Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/callback" element={<Callback />} />
@@ -144,20 +164,20 @@ function AppContent() {
           <Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/program" element={<ProgramPage />} />
-<Route path="/program/master" element={<ProgramPage filterType="master" />} />
+          <Route path="/program/master" element={<ProgramPage filterType="master" />} />
           <Route path="/program/:slug" element={<ProgramDetailPage />} />
           <Route path="/program/master/:slug" element={<ProgramMasterDetailPage />} />
           <Route path="/lecture/:id" element={<LectureDetailPage />} />
-<Route path="/insight" element={<InsightPage />} />
+          <Route path="/insight" element={<InsightPage />} />
           <Route path="/insight/:slug" element={<InsightDetailPage />} />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/admin/users" element={<AdminPage />} />
-          <Route path="/admin/programs" element={<AdminPage />} />
-          <Route path="/admin/programs/new" element={<AdminPage />} />
-          <Route path="/admin/lectures" element={<AdminPage />} />
-          <Route path="/admin/posts" element={<AdminPage />} />
+          <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/admin/programs" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/admin/programs/new" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/admin/lectures" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/admin/posts" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         </Routes>
         
         <ToastContainer
