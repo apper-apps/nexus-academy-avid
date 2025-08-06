@@ -14,6 +14,7 @@ import ProgramDetailPage from '@/components/pages/ProgramDetailPage';
 import ProgramMasterDetailPage from '@/components/pages/ProgramMasterDetailPage';
 import LectureDetailPage from '@/components/pages/LectureDetailPage';
 import InsightPage from '@/components/pages/InsightPage';
+import InsightDetailPage from '@/components/pages/InsightDetailPage';
 import ReviewsPage from '@/components/pages/ReviewsPage';
 import ProfilePage from '@/components/pages/ProfilePage';
 import AdminPage from '@/components/pages/AdminPage';
@@ -147,9 +148,9 @@ function AppContent() {
           <Route path="/program/:slug" element={<ProgramDetailPage />} />
           <Route path="/program/master/:slug" element={<ProgramMasterDetailPage />} />
           <Route path="/lecture/:id" element={<LectureDetailPage />} />
-          <Route path="/insight" element={<InsightPage />} />
-<Route path="/reviews" element={<ReviewsPage />} />
-          <Route path="/insight/:slug" element={<InsightPage />} />
+<Route path="/insight" element={<InsightPage />} />
+          <Route path="/insight/:slug" element={<InsightDetailPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/users" element={<AdminPage />} />
