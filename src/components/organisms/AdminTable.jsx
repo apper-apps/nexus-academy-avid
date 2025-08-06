@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { format } from 'date-fns';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import Badge from '@/components/atoms/Badge';
-import Loading from '@/components/ui/Loading';
-import Error from '@/components/ui/Error';
-import Empty from '@/components/ui/Empty';
+import React, { useState } from "react";
+import { format } from "date-fns";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
 
 const AdminTable = ({ 
   data, 
@@ -144,13 +144,12 @@ const AdminTable = ({
           
           <tbody className="divide-y divide-gray-700">
             {sortedData.map((item) => (
-              <tr key={item.Id} className="hover:bg-navy-light/50 transition-colors">
+<tr key={item.Id} className="hover:bg-navy-light/50 transition-colors">
                 {columns.map((column) => (
                   <td key={column.field} className="px-4 py-4 text-sm text-gray-300">
                     {renderCellValue(item, column)}
                   </td>
                 ))}
-                
                 <td className="px-4 py-4 text-sm text-right">
                   <div className="flex items-center justify-end space-x-2">
                     {onEdit && (
