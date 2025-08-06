@@ -12,7 +12,7 @@ import { getProgramBySlug } from '@/services/api/programService';
 import { getLecturesByProgram } from '@/services/api/lectureService';
 import { addToWaitlist } from '@/services/api/waitlistService';
 
-const ProgramDetailPage = () => {
+const ProgramDetailPage = ({ currentUser }) => {
   const { slug } = useParams();
   const navigate = useNavigate();
   
@@ -24,6 +24,21 @@ const ProgramDetailPage = () => {
   const [isJoining, setIsJoining] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  // Helper function to check if user has access to lectures
+  const hasLectureAccess = () => {
+    if (!currentUser) return false;
+    return currentUser.role === "member" || currentUser.role === "both";
+  };
+
+  // Helper function to check if user is admin
+  const isAdmin = () => {
+    return currentUser && currentUser.is_admin;
+  };
+
+  const handleAddLecture = () => {
+    navigate('/admin/lectures');
+    toast.success('Redirecting to lecture management...');
+  };
   const loadProgramData = async () => {
     try {
       setLoading(true);
@@ -160,10 +175,19 @@ const ProgramDetailPage = () => {
 
             {/* Lectures Section */}
             <div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                 <h2 className="text-2xl font-semibold text-white mb-4 sm:mb-0">
                   Course Content ({lectures.length} lectures)
                 </h2>
+                {isAdmin() && (
+                  <Button
+                    onClick={handleAddLecture}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                  >
+                    <ApperIcon name="Plus" size={16} />
+                    Add Lecture
+                  </Button>
+                )}
                 
                 <div className="flex flex-wrap gap-2">
                   {categories.map((category) => (
@@ -183,10 +207,20 @@ const ProgramDetailPage = () => {
               </div>
 
               {filteredLectures.length > 0 ? (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {filteredLectures.map((lecture) => (
-                    <LectureCard key={lecture.Id} lecture={lecture} />
-                  ))}
+<div className="grid md:grid-cols-2 gap-6">
+                  {filteredLectures.map((lecture, index) => {
+                    const canAccess = hasLectureAccess() || index === 0;
+                    const isLocked = !canAccess;
+                    
+                    return (
+                      <LectureCard 
+                        key={lecture.Id} 
+                        lecture={lecture} 
+                        isLocked={isLocked}
+                        currentUser={currentUser}
+                      />
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-400">

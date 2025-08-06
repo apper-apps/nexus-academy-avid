@@ -63,9 +63,9 @@ function App() {
         />
         
         <Routes>
-          <Route path="/" element={<HomePage />} />
+<Route path="/" element={<HomePage />} />
           <Route path="/program" element={<ProgramPage />} />
-          <Route path="/program/:slug" element={<ProgramDetailPage />} />
+          <Route path="/program/:slug" element={<ProgramDetailPage currentUser={currentUser} />} />
           <Route path="/lecture/:id" element={<LectureDetailPage />} />
           <Route path="/insight" element={<InsightPage />} />
           <Route path="/insight/:slug" element={<InsightPage />} />
