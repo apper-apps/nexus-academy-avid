@@ -13,11 +13,13 @@ export const getPosts = async () => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
         { field: { Name: "content" } },
+        { field: { Name: "thumbnail_url" } },
+        { field: { Name: "summary" } },
         { field: { Name: "created_at" } },
         { field: { Name: "updated_at" } },
         { 
@@ -54,10 +56,12 @@ export const getPostBySlug = async (slug) => {
     const apperClient = getApperClient();
     const params = {
       fields: [
-        { field: { Name: "Name" } },
+{ field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
         { field: { Name: "content" } },
+        { field: { Name: "thumbnail_url" } },
+        { field: { Name: "summary" } },
         { field: { Name: "created_at" } },
         { field: { Name: "updated_at" } },
         { 
@@ -101,10 +105,12 @@ export const createPost = async (postData) => {
     const apperClient = getApperClient();
     const params = {
       records: [{
-        Name: postData.title,
+Name: postData.title,
         slug: postData.slug,
         title: postData.title,
         content: postData.content,
+        thumbnail_url: postData.thumbnail_url || "",
+        summary: postData.summary || "",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         author_id: parseInt(postData.author_id || 1)
@@ -149,7 +155,7 @@ export const updatePost = async (id, postData) => {
     };
     
     // Only include updateable fields
-    if (postData.Name !== undefined) {
+if (postData.Name !== undefined) {
       updateData.Name = postData.Name;
     }
     if (postData.slug !== undefined) {
@@ -161,6 +167,12 @@ export const updatePost = async (id, postData) => {
     }
     if (postData.content !== undefined) {
       updateData.content = postData.content;
+    }
+    if (postData.thumbnail_url !== undefined) {
+      updateData.thumbnail_url = postData.thumbnail_url;
+    }
+    if (postData.summary !== undefined) {
+      updateData.summary = postData.summary;
     }
     if (postData.author_id !== undefined) {
       updateData.author_id = parseInt(postData.author_id);

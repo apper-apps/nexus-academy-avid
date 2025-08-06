@@ -12,10 +12,12 @@ const AdminPostsTab = () => {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     title: "",
     slug: "",
     content: "",
+    thumbnail_url: "",
+    summary: "",
     author_id: 1
   });
 
@@ -48,11 +50,13 @@ const AdminPostsTab = () => {
     loadPosts();
   }, []);
 
-  const resetForm = () => {
+const resetForm = () => {
     setFormData({
       title: "",
       slug: "",
       content: "",
+      thumbnail_url: "",
+      summary: "",
       author_id: 1
     });
     setEditingPost(null);
@@ -63,11 +67,13 @@ const AdminPostsTab = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (post) => {
+const handleEdit = (post) => {
     setFormData({
       title: post.title,
       slug: post.slug,
       content: post.content,
+      thumbnail_url: post.thumbnail_url || "",
+      summary: post.summary || "",
       author_id: post.author_id
     });
     setEditingPost(post);
@@ -156,10 +162,10 @@ const AdminPostsTab = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+<form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <FormField
-                  label="Title"
+                  label="Title (제목)"
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
@@ -176,6 +182,24 @@ const AdminPostsTab = () => {
                 />
               </div>
               
+              <div className="grid md:grid-cols-2 gap-4">
+                <FormField
+                  label="Thumbnail URL (썸네일 URL)"
+                  name="thumbnail_url"
+                  value={formData.thumbnail_url}
+                  onChange={handleInputChange}
+                  placeholder="https://example.com/image.jpg"
+                />
+                
+                <FormField
+                  label="SEO Summary (SEO 요약 160자)"
+                  name="summary"
+                  value={formData.summary}
+                  onChange={handleInputChange}
+                  placeholder="Brief description for SEO (max 160 characters)"
+                  maxLength={160}
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-200 mb-2">
                   Content
