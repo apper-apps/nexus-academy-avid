@@ -151,11 +151,11 @@ const programDropdownItems = [
               </>
             ) : (
               <div className="px-3 py-2 space-y-2">
-                <Button 
+<Button 
                   variant="ghost" 
                   className="w-full"
                   onClick={() => {
-                    onLogin?.();
+                    navigate('/login');
                     setIsMobileMenuOpen(false);
                   }}
                 >
@@ -164,7 +164,7 @@ const programDropdownItems = [
                 <Button 
                   className="w-full"
                   onClick={() => {
-                    onSignup?.();
+                    navigate('/signup');
                     setIsMobileMenuOpen(false);
                   }}
                 >

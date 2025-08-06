@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { createContext, useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setUser, clearUser } from './store/userSlice';
 
 // Layout Components
 import TopNavigation from '@/components/organisms/TopNavigation';
@@ -14,66 +16,141 @@ import InsightPage from '@/components/pages/InsightPage';
 import ReviewsPage from '@/components/pages/ReviewsPage';
 import ProfilePage from '@/components/pages/ProfilePage';
 import AdminPage from '@/components/pages/AdminPage';
+import Login from '@/components/pages/Login';
+import Signup from '@/components/pages/Signup';
+import Callback from '@/components/pages/Callback';
+import ErrorPage from '@/components/pages/ErrorPage';
+import ResetPassword from '@/components/pages/ResetPassword';
+import PromptPassword from '@/components/pages/PromptPassword';
 
-// Mock user data - in a real app, this would come from authentication context
-const mockUsers = [
-  {
-    Id: 1,
-    name: "Academy Admin",
-    email: "admin@nexusacademy.com",
-    role: "both",
-    master_cohort: "2024-Q1",
-    is_admin: true
-  },
-  {
-    Id: 2,
-    name: "Active Member",
-    email: "member@example.com",
-    role: "member",
-    master_cohort: null,
-    is_admin: false
+// Create auth context
+export const AuthContext = createContext(null);
+
+function AppContent() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize ApperUI once when the app loads
+  useEffect(() => {
+    const { ApperClient, ApperUI } = window.ApperSDK;
+    
+    const client = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+    
+    // Initialize but don't show login yet
+    ApperUI.setup(client, {
+      target: '#authentication',
+      clientId: import.meta.env.VITE_APPER_PROJECT_ID,
+      view: 'both',
+      onSuccess: function (user) {
+        setIsInitialized(true);
+        // CRITICAL: This exact currentPath logic must be preserved in all implementations
+        // DO NOT simplify or modify this pattern as it ensures proper redirection flow
+        let currentPath = window.location.pathname + window.location.search;
+        let redirectPath = new URLSearchParams(window.location.search).get('redirect');
+        const isAuthPage = currentPath.includes('/login') || currentPath.includes('/signup') || 
+                           currentPath.includes('/callback') || currentPath.includes('/error') || 
+                           currentPath.includes('/prompt-password') || currentPath.includes('/reset-password');
+        
+        if (user) {
+          // User is authenticated
+          if (redirectPath) {
+            navigate(redirectPath);
+          } else if (!isAuthPage) {
+            if (!currentPath.includes('/login') && !currentPath.includes('/signup')) {
+              navigate(currentPath);
+            } else {
+              navigate('/');
+            }
+          } else {
+            navigate('/');
+          }
+          // Store user information in Redux
+          dispatch(setUser(JSON.parse(JSON.stringify(user))));
+        } else {
+          // User is not authenticated
+          if (!isAuthPage) {
+            navigate(
+              currentPath.includes('/signup')
+                ? `/signup?redirect=${currentPath}`
+                : currentPath.includes('/login')
+                ? `/login?redirect=${currentPath}`
+                : '/login'
+            );
+          } else if (redirectPath) {
+            if (
+              !['error', 'signup', 'login', 'callback', 'prompt-password', 'reset-password'].some((path) => currentPath.includes(path))
+            ) {
+              navigate(`/login?redirect=${redirectPath}`);
+            } else {
+              navigate(currentPath);
+            }
+          } else if (isAuthPage) {
+            navigate(currentPath);
+          } else {
+            navigate('/login');
+          }
+          dispatch(clearUser());
+        }
+      },
+      onError: function(error) {
+        console.error("Authentication failed:", error);
+        setIsInitialized(true);
+      }
+    });
+  }, [navigate, dispatch]);
+  
+  // Authentication methods to share via context
+  const authMethods = {
+    isInitialized,
+    logout: async () => {
+      try {
+        const { ApperUI } = window.ApperSDK;
+        await ApperUI.logout();
+        dispatch(clearUser());
+        navigate('/login');
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    }
+  };
+  
+  // Don't render routes until initialization is complete
+  if (!isInitialized) {
+    return (
+      <div className="loading flex items-center justify-center p-6 h-screen w-full">
+        <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2v4"></path><path d="m16.2 7.8 2.9-2.9"></path><path d="M18 12h4"></path><path d="m16.2 16.2 2.9 2.9"></path><path d="M12 18v4"></path><path d="m4.9 19.1 2.9-2.9"></path><path d="M2 12h4"></path><path d="m4.9 4.9 2.9 2.9"></path>
+        </svg>
+      </div>
+    );
   }
-];
-
-function App() {
-  const [currentUser, setCurrentUser] = useState(mockUsers[0]); // Mock logged-in admin user
-
-  const handleLogin = () => {
-    // Mock login - in real app, this would trigger auth flow
-    console.log("Login triggered");
-  };
-
-  const handleSignup = () => {
-    // Mock signup - in real app, this would trigger auth flow
-    console.log("Signup triggered");
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-  };
-
+  
   return (
-    <BrowserRouter>
+    <AuthContext.Provider value={authMethods}>
       <div className="min-h-screen bg-midnight">
-        <TopNavigation
-          currentUser={currentUser}
-          onLogin={handleLogin}
-          onSignup={handleSignup}
-          onLogout={handleLogout}
-        />
-<Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/program" element={<ProgramPage currentUser={currentUser} />} />
-      <Route path="/program/master" element={<ProgramPage currentUser={currentUser} filterType="master" />} />
-      <Route path="/program/:slug" element={<ProgramDetailPage currentUser={currentUser} />} />
-      <Route path="/lecture/:id" element={<LectureDetailPage />} />
-      <Route path="/lecture/:id" element={<LectureDetailPage />} />
-      <Route path="/insight" element={<InsightPage />} />
-      <Route path="/insight/:slug" element={<InsightPage />} />
+        <TopNavigation />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/callback" element={<Callback />} />
+          <Route path="/error" element={<ErrorPage />} />
+          <Route path="/prompt-password/:appId/:emailAddress/:provider" element={<PromptPassword />} />
+          <Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/program" element={<ProgramPage />} />
+          <Route path="/program/master" element={<ProgramPage filterType="master" />} />
+          <Route path="/program/:slug" element={<ProgramDetailPage />} />
+          <Route path="/lecture/:id" element={<LectureDetailPage />} />
+          <Route path="/insight" element={<InsightPage />} />
+          <Route path="/insight/:slug" element={<InsightPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/users" element={<AdminPage />} />
-<Route path="/admin/programs" element={<AdminPage />} />
+          <Route path="/admin/programs" element={<AdminPage />} />
           <Route path="/admin/programs/new" element={<AdminPage />} />
           <Route path="/admin/lectures" element={<AdminPage />} />
           <Route path="/admin/posts" element={<AdminPage />} />
@@ -92,6 +169,14 @@ function App() {
           theme="dark"
         />
       </div>
+    </AuthContext.Provider>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }

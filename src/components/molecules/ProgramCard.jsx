@@ -20,7 +20,7 @@ const ProgramCard = ({ program }) => {
         </div>
         <div className="text-right">
           <div className="text-2xl font-bold text-electric">
-            ${program.price.toLocaleString()}
+${program.price.toLocaleString()}
           </div>
           <div className="text-sm text-gray-400">one-time</div>
         </div>

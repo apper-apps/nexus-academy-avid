@@ -1,89 +1,262 @@
-import postData from "@/services/mockData/posts.json";
+import { toast } from 'react-toastify';
 
-let posts = [...postData];
+// Initialize ApperClient
+const getApperClient = () => {
+  const { ApperClient } = window.ApperSDK;
+  return new ApperClient({
+    apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+    apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+  });
+};
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+export const getPosts = async () => {
+  try {
+    const apperClient = getApperClient();
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "slug" } },
+        { field: { Name: "title" } },
+        { field: { Name: "content" } },
+        { field: { Name: "created_at" } },
+        { field: { Name: "updated_at" } },
+        { 
+          field: { Name: "author_id" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ],
+      orderBy: [
+        { fieldName: "created_at", sorttype: "DESC" }
+      ]
+    };
+    
+    const response = await apperClient.fetchRecords("post", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      toast.error(response.message);
+      return [];
+    }
+    
+    return response.data || [];
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error fetching posts:", error.response.data.message);
+    } else {
+      console.error(error.message);
+    }
+    return [];
+  }
+};
 
-// Mock data object to simulate the expected API
+export const getPostBySlug = async (slug) => {
+  try {
+    const apperClient = getApperClient();
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "slug" } },
+        { field: { Name: "title" } },
+        { field: { Name: "content" } },
+        { field: { Name: "created_at" } },
+        { field: { Name: "updated_at" } },
+        { 
+          field: { Name: "author_id" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ],
+      where: [
+        {
+          FieldName: "slug",
+          Operator: "EqualTo",
+          Values: [slug]
+        }
+      ]
+    };
+    
+    const response = await apperClient.fetchRecords("post", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      throw new Error(response.message);
+    }
+    
+    if (!response.data || response.data.length === 0) {
+      throw new Error("Post not found");
+    }
+    
+    return response.data[0];
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error(`Error fetching post by slug ${slug}:`, error.response.data.message);
+    } else {
+      console.error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const createPost = async (postData) => {
+  try {
+    const apperClient = getApperClient();
+    const params = {
+      records: [{
+        Name: postData.title,
+        slug: postData.slug,
+        title: postData.title,
+        content: postData.content,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        author_id: parseInt(postData.author_id || 1)
+      }]
+    };
+    
+    const response = await apperClient.createRecord("post", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      toast.error(response.message);
+      throw new Error(response.message);
+    }
+    
+    if (response.results) {
+      const failedRecords = response.results.filter(result => !result.success);
+      if (failedRecords.length > 0) {
+        console.error(`Failed to create posts ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        failedRecords.forEach(record => {
+          if (record.message) toast.error(record.message);
+        });
+        throw new Error("Failed to create post");
+      }
+      return response.results[0].data;
+    }
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error creating post:", error.response.data.message);
+    } else {
+      console.error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const updatePost = async (id, postData) => {
+  try {
+    const apperClient = getApperClient();
+    const updateData = {
+      Id: parseInt(id),
+      updated_at: new Date().toISOString()
+    };
+    
+    // Only include updateable fields
+    if (postData.Name !== undefined) {
+      updateData.Name = postData.Name;
+    }
+    if (postData.slug !== undefined) {
+      updateData.slug = postData.slug;
+    }
+    if (postData.title !== undefined) {
+      updateData.title = postData.title;
+      updateData.Name = postData.title; // Update Name field as well
+    }
+    if (postData.content !== undefined) {
+      updateData.content = postData.content;
+    }
+    if (postData.author_id !== undefined) {
+      updateData.author_id = parseInt(postData.author_id);
+    }
+    
+    const params = {
+      records: [updateData]
+    };
+    
+    const response = await apperClient.updateRecord("post", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      toast.error(response.message);
+      throw new Error(response.message);
+    }
+    
+    if (response.results) {
+      const failedRecords = response.results.filter(result => !result.success);
+      if (failedRecords.length > 0) {
+        console.error(`Failed to update posts ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        failedRecords.forEach(record => {
+          if (record.message) toast.error(record.message);
+        });
+        throw new Error("Failed to update post");
+      }
+      return response.results[0].data;
+    }
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error updating post:", error.response.data.message);
+    } else {
+      console.error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const deletePost = async (id) => {
+  try {
+    const apperClient = getApperClient();
+    const params = {
+      RecordIds: [parseInt(id)]
+    };
+    
+    const response = await apperClient.deleteRecord("post", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      toast.error(response.message);
+      throw new Error(response.message);
+    }
+    
+    if (response.results) {
+      const failedRecords = response.results.filter(result => !result.success);
+      if (failedRecords.length > 0) {
+        console.error(`Failed to delete posts ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        failedRecords.forEach(record => {
+          if (record.message) toast.error(record.message);
+        });
+        throw new Error("Failed to delete post");
+      }
+      return response.results[0].data;
+    }
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error deleting post:", error.response.data.message);
+    } else {
+      console.error(error.message);
+    }
+    throw error;
+  }
+};
+
+// Legacy exports for compatibility
 const data = {
   select: (table) => {
     if (table === "Post") {
       return {
         order: (field, direction) => ({
-          list: async () => {
-            await delay(200);
-            const sorted = [...posts].sort((a, b) => {
-              if (direction === "desc") {
-                return new Date(b[field]) - new Date(a[field]);
-              }
-              return new Date(a[field]) - new Date(b[field]);
-            });
-            return sorted;
-          }
+          list: getPosts
         }),
         where: (conditions) => ({
           single: async () => {
-            await delay(200);
-            const post = posts.find(p => {
-              return Object.keys(conditions).every(key => p[key] === conditions[key]);
-            });
-            if (!post) {
-              throw new Error("Post not found");
+            if (conditions.slug) {
+              return await getPostBySlug(conditions.slug);
             }
-            return { ...post };
+            throw new Error("Post not found");
           }
         })
       };
     }
     return null;
   },
-  insert: async (table, item) => {
-    if (table === "Post") {
-      await delay(400);
-      const maxId = posts.length > 0 ? Math.max(...posts.map(p => p.Id)) : 0;
-      const newPost = {
-        ...item,
-        Id: maxId + 1,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      posts.push(newPost);
-      return { ...newPost };
-    }
-    return null;
-  },
-  update: async (table, id, item) => {
-    if (table === "Post") {
-      await delay(300);
-      const index = posts.findIndex(p => p.Id === parseInt(id));
-      if (index === -1) {
-        throw new Error("Post not found");
-      }
-      posts[index] = { 
-        ...posts[index], 
-        ...item, 
-        updated_at: new Date().toISOString() 
-      };
-      return { ...posts[index] };
-    }
-    return null;
-  }
+  insert: createPost,
+  update: updatePost
 };
 
 export { data };
-
-export const getPosts = async () => data.select("Post").order("created_at", "desc").list();
-export const getPostBySlug = async (slug) => data.select("Post").where({ slug }).single();
-export const createPost = async (p) => data.insert("Post", p);
-export const updatePost = async (id, p) => data.update("Post", id, p);
-
-export const deletePost = async (id) => {
-  await delay(300);
-  const index = posts.findIndex(p => p.Id === parseInt(id));
-  if (index === -1) {
-    throw new Error("Post not found");
-  }
-  const deleted = posts[index];
-  posts.splice(index, 1);
-  return { ...deleted };
-};
