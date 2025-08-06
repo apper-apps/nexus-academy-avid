@@ -14,45 +14,45 @@ const ProgramCard = ({ program }) => {
           <h3 className="text-xl font-semibold text-white mb-2">
             {program.title}
           </h3>
-          <Badge variant="primary" size="sm" className="mb-3">
-            {program.type === 'member' ? 'Member Program' : 'Master Program'}
+<Badge variant="primary" size="sm" className="mb-3">
+            {program.type === 'member' ? '멤버 프로그램' : '마스터 프로그램'}
           </Badge>
         </div>
         <div className="text-right">
           <div className="text-2xl font-bold text-electric">
-${program.price.toLocaleString()}
+₩{program.price.toLocaleString()}
           </div>
-          <div className="text-sm text-gray-400">one-time</div>
+          <div className="text-sm text-gray-400">일회 결제</div>
         </div>
       </div>
 
-      <p className="text-gray-300 mb-6 line-clamp-3">
+<p className="text-gray-300 mb-6 line-clamp-3">
         {program.description}
       </p>
 
       <div className="space-y-3 mb-6">
         <div className="flex items-center text-sm text-gray-400">
           <ApperIcon name="Clock" size={16} className="mr-2" />
-          <span>Self-paced learning</span>
+          <span>자율 학습</span>
         </div>
         <div className="flex items-center text-sm text-gray-400">
           <ApperIcon name="Users" size={16} className="mr-2" />
-          <span>Community access</span>
+          <span>커뮤니티 접근</span>
         </div>
         {program.has_common_course && (
           <div className="flex items-center text-sm text-gray-400">
             <ApperIcon name="Star" size={16} className="mr-2" />
-            <span>Common course included</span>
+            <span>공통 과정 포함</span>
           </div>
         )}
       </div>
 
       <div className="flex space-x-3">
         <Button 
-          className="flex-1"
+className="flex-1"
           onClick={() => navigate(`/program/${program.slug}`)}
         >
-          Learn More
+          더 알아보기
         </Button>
         <Button 
           variant="secondary"

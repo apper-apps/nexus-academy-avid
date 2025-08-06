@@ -52,8 +52,12 @@ const LectureCard = ({ lecture, isLocked = false, currentUser }) => {
       
       <div className={`p-4 ${isLocked ? 'blur-sm' : ''}`}>
         <div className="flex items-center justify-between mb-2">
-          <Badge variant={getLevelBadgeVariant(lecture.level)} size="sm">
-            {lecture.level.replace('_', ' ')}
+<Badge variant={getLevelBadgeVariant(lecture.level)} size="sm">
+            {lecture.level === 'beginner' ? '초급' : 
+             lecture.level === 'intermediate' ? '중급' : 
+             lecture.level === 'advanced' ? '고급' : 
+             lecture.level === 'master_common' ? '마스터 공통' : 
+             lecture.level}
           </Badge>
           <div className="flex items-center text-sm text-gray-400">
             <ApperIcon name="Clock" size={14} className="mr-1" />
@@ -83,9 +87,9 @@ const LectureCard = ({ lecture, isLocked = false, currentUser }) => {
             <div className="w-16 h-16 bg-electric/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <ApperIcon name="Lock" size={24} className="text-electric" />
             </div>
-            <p className="text-white font-semibold mb-2">Premium Content</p>
+<p className="text-white font-semibold mb-2">프리미엄 콘텐츠</p>
             <p className="text-gray-400 text-sm">
-              {!currentUser ? "Log in to unlock this lecture" : "Upgrade to access all content"}
+              {!currentUser ? "로그인하여 이 강의를 잠금 해제하세요" : "모든 콘텐츠에 액세스하려면 업그레이드하세요"}
             </p>
           </div>
         </div>

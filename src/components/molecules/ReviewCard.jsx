@@ -29,18 +29,18 @@ const ReviewCard = ({ review, currentUserId = null, isAdmin = false, onLike, onT
             <ApperIcon name="User" size={20} className="text-electric" />
           </div>
           <div>
-            <div className="font-medium text-white">Community Member</div>
+<div className="font-medium text-white">커뮤니티 멤버</div>
             <div className="text-sm text-gray-400">
-              {format(new Date(review.created_at), 'MMM dd, yyyy')}
+              {format(new Date(review.created_at), 'yyyy년 MM월 dd일')}
 </div>
           </div>
         </div>
         
         <div className="flex items-center space-x-2">
-          {review.featured && (
+{review.featured && (
             <Badge variant="primary" size="sm">
               <ApperIcon name="Star" size={12} className="mr-1" />
-              Featured
+              추천
             </Badge>
           )}
           
@@ -84,15 +84,15 @@ const ReviewCard = ({ review, currentUserId = null, isAdmin = false, onLike, onT
             size={16} 
             className={isLiked ? 'fill-current' : ''} 
           />
-          <span className="text-sm">
+<span className="text-sm">
             {Array.isArray(review.likes) ? review.likes.length : 
-             (review.likes ? review.likes.split(',').filter(Boolean).length : 0)} likes
+             (review.likes ? review.likes.split(',').filter(Boolean).length : 0)} 좋아요
           </span>
         </button>
         
         <div className="flex items-center text-sm text-gray-500">
           <ApperIcon name="MessageCircle" size={14} className="mr-1" />
-          Helpful review
+          도움이 되는 리뷰
         </div>
       </div>
     </Card>

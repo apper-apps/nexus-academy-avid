@@ -15,22 +15,22 @@ const TopNavigation = () => {
 const { user, isAuthenticated } = useSelector((state) => state.user);
   const { logout } = useContext(AuthContext);
   
-  const programDropdownItems = [
+const programDropdownItems = [
     {
-      title: "Membership",
-      description: "Build your foundation",
+      title: "멤버십",
+      description: "기초를 다지세요",
       icon: "Users",
       href: "/program/membership"
     },
     {
-      title: "Master",
-      description: "Master communication",
+      title: "마스터",
+      description: "전문성을 완성하세요",
       icon: "MessageSquare",
       href: "/program/text-influencer"
     },
     ...(user?.is_admin ? [{
-      title: "➕ Add Program",
-      description: "Create new program",
+      title: "➕ 프로그램 추가",
+      description: "새 프로그램 만들기",
       icon: "Plus",
       href: "/admin/programs/new"
     }] : [])
@@ -74,22 +74,22 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-8">
-<NavLink to="/">Home</NavLink>
+<NavLink to="/">홈</NavLink>
               
               <NavigationDropdown 
-                label="Program"
+                label="프로그램"
                 items={programDropdownItems}
                 currentUser={user}
               />
               
-              <NavLink to="/insight">Insight</NavLink>
-              <NavLink to="/reviews">Reviews</NavLink>
+              <NavLink to="/insight">인사이트</NavLink>
+              <NavLink to="/reviews">리뷰</NavLink>
               
               {user && (
                 <>
-                  <NavLink to="/profile">Profile</NavLink>
+                  <NavLink to="/profile">프로필</NavLink>
                   {user.is_admin && (
-                    <NavLink to="/admin">Admin</NavLink>
+                    <NavLink to="/admin">관리자</NavLink>
                   )}
                 </>
               )}
@@ -106,10 +106,10 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
             ) : (
 <>
                 <Button variant="ghost" onClick={() => navigate('/login')}>
-                  Log In
+                  로그인
                 </Button>
                 <Button onClick={() => navigate('/signup')}>
-                  Sign Up
+                  회원가입
                 </Button>
               </>
             )}
@@ -134,16 +134,16 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
       {isMobileMenuOpen && (
         <div className="md:hidden bg-navy-card border-t border-gray-600">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <NavLink to="/" mobile>Home</NavLink>
-            <NavLink to="/program" mobile>Programs</NavLink>
-            <NavLink to="/insight" mobile>Insight</NavLink>
-            <NavLink to="/reviews" mobile>Reviews</NavLink>
+<NavLink to="/" mobile>홈</NavLink>
+            <NavLink to="/program" mobile>프로그램</NavLink>
+            <NavLink to="/insight" mobile>인사이트</NavLink>
+            <NavLink to="/reviews" mobile>리뷰</NavLink>
             
 {user ? (
               <>
-                <NavLink to="/profile" mobile>Profile</NavLink>
+                <NavLink to="/profile" mobile>프로필</NavLink>
                 {user.is_admin && (
-                  <NavLink to="/admin" mobile>Admin</NavLink>
+                  <NavLink to="/admin" mobile>관리자</NavLink>
                 )}
 <button
                   onClick={() => {
@@ -152,7 +152,7 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
                   }}
                   className="block w-full text-left px-3 py-2 text-white hover:text-electric transition-colors duration-200"
                 >
-                  Log Out
+                  로그아웃
                 </button>
               </>
             ) : (
@@ -165,7 +165,7 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
                     setIsMobileMenuOpen(false);
                   }}
                 >
-                  Log In
+                  로그인
                 </Button>
                 <Button 
                   className="w-full"
@@ -174,7 +174,7 @@ const { user, isAuthenticated } = useSelector((state) => state.user);
                     setIsMobileMenuOpen(false);
                   }}
                 >
-                  Sign Up
+                  회원가입
                 </Button>
               </div>
             )}

@@ -36,8 +36,8 @@ const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    if (!isAuthenticated || !user?.is_admin) {
-      toast.error('Admin only');
+if (!isAuthenticated || !user?.is_admin) {
+      toast.error('관리자만 접근 가능');
       navigate('/');
     }
   }, [isAuthenticated, user, navigate]);

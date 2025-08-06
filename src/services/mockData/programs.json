@@ -2,8 +2,8 @@
   {
     "Id": 1,
     "slug": "membership",
-    "title": "Membership Program",
-    "description": "Transform your mindset and build lasting wealth through proven strategies and community support. Perfect for entrepreneurs ready to scale their first business.",
+    "title": "멤버십 프로그램",
+    "description": "검증된 전략과 커뮤니티 지원을 통해 마인드셋을 변화시키고 지속 가능한 부를 구축하세요. 첫 번째 사업을 확장할 준비가 된 기업가에게 완벽합니다.",
     "price": 997,
     "has_common_course": false,
     "type": "member",
@@ -12,8 +12,8 @@
   {
     "Id": 2,
     "slug": "text-influencer",
-    "title": "Text Influencer Master",
-    "description": "Master the art of influence through written communication. Learn advanced copywriting, content strategy, and audience psychology from industry experts.",
+    "title": "텍스트 인플루언서 마스터",
+    "description": "서면 커뮤니케이션을 통한 영향력의 예술을 마스터하세요. 업계 전문가들로부터 고급 카피라이팅, 콘텐츠 전략, 독자 심리학을 배웁니다.",
     "price": 2997,
     "has_common_course": true,
     "type": "master",

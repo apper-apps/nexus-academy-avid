@@ -43,15 +43,15 @@ const PostCard = ({ post, author = "Nexus Academy" }) => {
                     </div>
                     <div>
                         <div className="text-sm font-medium text-white">
-                            {post.author_id?.Name || author}
+{post.author_id?.Name || author}
                         </div>
                         <div className="text-xs text-gray-400">
-                            {format(new Date(post.created_at), "MMM dd, yyyy")}
+                            {format(new Date(post.created_at), "yyyy년 MM월 dd일")}
                         </div>
                     </div>
                 </div>
                 <div className="flex items-center text-sm text-gray-400">
-                    <span>Read more</span>
+                    <span>더 보기</span>
                     <ApperIcon name="ArrowRight" size={16} className="ml-1" />
                 </div>
             </div>
