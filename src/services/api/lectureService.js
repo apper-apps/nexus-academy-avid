@@ -21,7 +21,8 @@ export const getLectures = async () => {
         { field: { Name: "level" } },
         { field: { Name: "duration" } },
         { field: { Name: "video_url" } },
-        { field: { Name: "embed_url" } },
+{ field: { Name: "embed_url" } },
+        { field: { Name: "cohort_number" } },
         { field: { Name: "created_at" } },
         { 
           field: { Name: "program_id" },
@@ -61,7 +62,8 @@ export const getLectureById = async (id) => {
         { field: { Name: "level" } },
         { field: { Name: "duration" } },
         { field: { Name: "video_url" } },
-        { field: { Name: "embed_url" } },
+{ field: { Name: "embed_url" } },
+        { field: { Name: "cohort_number" } },
         { field: { Name: "created_at" } },
         { 
           field: { Name: "program_id" },
@@ -99,8 +101,9 @@ export const getLecturesByProgram = async (programId) => {
         { field: { Name: "category" } },
         { field: { Name: "level" } },
         { field: { Name: "duration" } },
-        { field: { Name: "video_url" } },
+{ field: { Name: "video_url" } },
         { field: { Name: "embed_url" } },
+        { field: { Name: "cohort_number" } },
         { field: { Name: "created_at" } }
       ],
       where: [
