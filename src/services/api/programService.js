@@ -14,6 +14,7 @@ export const getPrograms = async () => {
     const apperClient = getApperClient();
     const params = {
 fields: [
+        { field: { Name: "Id" } },
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
@@ -52,6 +53,7 @@ export const getProgramById = async (id) => {
     const apperClient = getApperClient();
     const params = {
 fields: [
+        { field: { Name: "Id" } },
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
@@ -97,6 +99,7 @@ export const getProgramBySlug = async (slug) => {
     const apperClient = getApperClient();
     const params = {
 fields: [
+        { field: { Name: "Id" } },
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
         { field: { Name: "title" } },
@@ -294,10 +297,11 @@ export const getNonMembershipPrograms = async () => {
   try {
     const apperClient = getApperClient();
     const params = {
-      fields: [
+fields: [
+        { field: { Name: "Id" } },
         { field: { Name: "Name" } },
         { field: { Name: "slug" } },
-{ field: { Name: "title" } },
+        { field: { Name: "title" } },
         { field: { Name: "description" } },
         { field: { Name: "thumbnail_url" } },
         { field: { Name: "description_short" } },
