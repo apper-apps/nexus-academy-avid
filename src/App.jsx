@@ -94,11 +94,11 @@ function AppContent() {
           // Store user information in Redux
           dispatch(setUser(JSON.parse(JSON.stringify(user))));
 } else {
-          // User is not authenticated
+// User is not authenticated
           // Define public routes that don't require authentication
-          const publicRoutes = ['/'];
+          const publicRoutes = ['/', '/program', '/insight', '/reviews'];
           const isPublicRoute = publicRoutes.some(route => 
-            currentPath === route || currentPath.startsWith(route + '?')
+            currentPath === route || currentPath.startsWith(route + '?') || currentPath.startsWith(route + '/')
           );
           
           if (!isAuthPage && !isPublicRoute) {
