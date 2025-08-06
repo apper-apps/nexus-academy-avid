@@ -11,17 +11,27 @@ import Button from "@/components/atoms/Button";
 
 export default function ProgramPage({ filterType = 'all', currentUser = null }) {
   const navigate = useNavigate()
-const [programs, setPrograms] = useState([])
+  const [programs, setPrograms] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const isAdmin = currentUser?.is_admin || false
-  async function loadPrograms() {
+async function loadPrograms() {
     try {
       setLoading(true)
       setError("");
       const data = await getPrograms();
-      setPrograms(data);
+      
+      // Filter programs based on filterType
+      let filteredPrograms = data;
+      if (filterType === 'member') {
+        filteredPrograms = data.filter(program => program.type === 'member');
+      } else if (filterType === 'master') {
+        filteredPrograms = data.filter(program => program.type === 'master');
+      }
+      // filterType === 'all' shows all programs (default)
+      
+      setPrograms(filteredPrograms);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -75,6 +85,35 @@ useEffect(() => {
     );
   }
 
+// Get header content based on filter type
+  const getHeaderContent = () => {
+    if (filterType === 'member') {
+      return {
+        badge: "멤버십 프로그램",
+        title: "기초를 다지는",
+        subtitle: "멤버십 프로그램",
+        description: "창업의 기초부터 탄탄히 다지고, 검증된 전략과 커뮤니티 지원을 통해 첫 번째 사업을 성공적으로 확장하세요."
+      };
+    } else if (filterType === 'master') {
+      return {
+        badge: "마스터 프로그램", 
+        title: "전문성을 완성하는",
+        subtitle: "마스터 프로그램",
+        description: "업계 전문가들로부터 고급 전략과 심화 기술을 배우고, 귀하의 전문 분야에서 최고 수준에 도달하세요."
+      };
+    }
+    
+    // Default for 'all'
+    return {
+      badge: "Premium Learning Programs",
+      title: "Choose Your Path to",
+      subtitle: "Entrepreneurial Success",
+      description: "Our carefully crafted programs combine proven strategies, expert mentorship, and a supportive community to accelerate your business growth."
+    };
+  };
+
+  const headerContent = getHeaderContent();
+
   return (
     <div className="pt-16 min-h-screen bg-midnight">
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -82,19 +121,18 @@ useEffect(() => {
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 bg-electric/10 border border-electric/30 rounded-full text-electric text-sm font-medium mb-6">
             <ApperIcon name="BookOpen" size={16} className="mr-2" />
-            Premium Learning Programs
+            {headerContent.badge}
           </div>
           
           <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">
-            Choose Your Path to
+            {headerContent.title}
             <span className="block bg-gradient-to-r from-electric to-blue-400 bg-clip-text text-transparent">
-              Entrepreneurial Success
+              {headerContent.subtitle}
             </span>
           </h1>
           
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-            Our carefully crafted programs combine proven strategies, expert mentorship, 
-            and a supportive community to accelerate your business growth.
+            {headerContent.description}
           </p>
         </div>
 

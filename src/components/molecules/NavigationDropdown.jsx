@@ -47,38 +47,48 @@ const NavigationDropdown = ({ label, items, className = "", currentUser }) => {
     setIsOpen(false);
   };
 
-  // Generate dynamic program items if this is the Program dropdown
+// Generate dynamic program items if this is the Program dropdown
   const getDropdownItems = () => {
     if (label === 'Program') {
       const programItems = [];
       
-      // Add member programs
+      // Check if there are any member programs
       const memberPrograms = programs.filter(p => p.type === 'member');
       if (memberPrograms.length > 0) {
         programItems.push({
-          title: "Member Programs",
-          description: "Build your foundation",
+          title: "멤버십",
+          description: "기초를 다지는 멤버십 프로그램",
           icon: "Users",
           href: "/program"
         });
       }
 
-      // Add master programs
+      // Check if there are any master programs  
       const masterPrograms = programs.filter(p => p.type === 'master');
       if (masterPrograms.length > 0) {
         programItems.push({
-          title: "Master Programs",
-          description: "Master your skills",
+          title: "마스터",
+          description: "전문 스킬을 마스터하는 프로그램",
           icon: "Crown",
           href: "/program/master"
+        });
+      }
+
+      // Show all programs option if no specific programs found but programs exist
+      if (programItems.length === 0 && programs.length > 0) {
+        programItems.push({
+          title: "모든 프로그램",
+          description: "전체 프로그램 보기",
+          icon: "BookOpen",
+          href: "/program"
         });
       }
 
       // Add admin option if applicable
       if (currentUser?.is_admin) {
         programItems.push({
-          title: "➕ Add Program",
-          description: "Create new program",
+          title: "➕ 프로그램 추가",
+          description: "새로운 프로그램 만들기",
           icon: "Plus",
           href: "/admin/programs/new"
         });
